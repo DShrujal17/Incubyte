@@ -15,6 +15,10 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
 
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
         User user = new User(
                 request.name(),
                 request.email(),
