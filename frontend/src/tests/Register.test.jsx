@@ -1,11 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-
 import Register from "../pages/Register";
 
 describe("Register Page", () => {
 
-    it("should render registration form", () => {
+    test("should render registration form", () => {
 
         render(<Register />);
 
