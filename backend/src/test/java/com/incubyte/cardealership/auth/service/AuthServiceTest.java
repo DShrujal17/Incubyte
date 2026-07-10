@@ -2,10 +2,12 @@ package com.incubyte.cardealership.auth.service;
 
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.user.entity.Role;
 import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -93,5 +95,31 @@ class AuthServiceTest {
                 IllegalArgumentException.class,
                 () -> authService.register(request)
         );
+    }
+
+    @Test
+    void shouldAssignDefaultUserRoleToRegisteredUser() {
+
+        RegisterRequest request = new RegisterRequest(
+                "Shrujal",
+                "shrujal@gmail.com",
+                "password123"
+        );
+
+        when(userRepository.findByEmail(request.email()))
+                .thenReturn(Optional.empty());
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        authService.register(request);
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+
+        assertEquals(Role.USER, savedUser.getRole());
     }
 }
