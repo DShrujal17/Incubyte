@@ -2,6 +2,7 @@ package com.incubyte.cardealership.auth.service;
 
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.incubyte.cardealership.user.entity.Role;
 import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
@@ -22,7 +23,7 @@ public class AuthService {
         }
 
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
