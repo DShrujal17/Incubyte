@@ -1,35 +1,46 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { vi } from "vitest";
+
 import Register from "../pages/Register";
+import * as authService from "../services/authService";
+
+vi.mock("../services/authService");
 
 describe("Register Page", () => {
 
-    test("should render registration form", () => {
+    test("should call register service when form is submitted", async () => {
+
+        authService.register.mockResolvedValue({});
 
         render(<Register />);
 
-        expect(
-            screen.getByRole("heading", {
-                name: /register/i,
-            })
-        ).toBeInTheDocument();
+        await userEvent.type(
+            screen.getByLabelText(/name/i),
+            "Shrujal"
+        );
 
-        expect(
-            screen.getByLabelText(/name/i)
-        ).toBeInTheDocument();
+        await userEvent.type(
+            screen.getByLabelText(/email/i),
+            "shrujal@gmail.com"
+        );
 
-        expect(
-            screen.getByLabelText(/email/i)
-        ).toBeInTheDocument();
+        await userEvent.type(
+            screen.getByLabelText(/password/i),
+            "password123"
+        );
 
-        expect(
-            screen.getByLabelText(/password/i)
-        ).toBeInTheDocument();
-
-        expect(
+        await userEvent.click(
             screen.getByRole("button", {
                 name: /register/i,
             })
-        ).toBeInTheDocument();
+        );
+
+        expect(authService.register).toHaveBeenCalledWith({
+            name: "Shrujal",
+            email: "shrujal@gmail.com",
+            password: "password123",
+        });
 
     });
 
