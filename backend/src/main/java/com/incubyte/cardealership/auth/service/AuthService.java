@@ -2,6 +2,7 @@ package com.incubyte.cardealership.auth.service;
 
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 
 public class AuthService {
@@ -13,6 +14,14 @@ public class AuthService {
     }
 
     public RegisterResponse register(RegisterRequest request) {
+
+        User user = new User(
+                request.name(),
+                request.email(),
+                request.password()
+        );
+
+        userRepository.save(user);
 
         return new RegisterResponse(
                 request.name(),

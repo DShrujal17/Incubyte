@@ -2,6 +2,7 @@ package com.incubyte.cardealership.auth.service;
 
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
