@@ -1,3 +1,12 @@
+import axios from "axios";
+
 export const register = async (userData) => {
-    return userData;
+
+    const response = await axios.post(
+        "http://localhost:8080/api/auth/register",
+        userData
+    );
+
+    return response.data;
+
 };
