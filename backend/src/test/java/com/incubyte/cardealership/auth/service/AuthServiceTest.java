@@ -74,12 +74,12 @@ class AuthServiceTest {
                 "password123"
         );
 
-        User existingUser = new User(
-                "Existing User",
-                "shrujal@gmail.com",
-                "password",
-                        Role.USER
-        );
+        User existingUser = User.builder()
+                .name("Existing User")
+                .email("shrujal@gmail.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
 
         when(userRepository.findByEmail(request.email()))
                 .thenReturn(Optional.of(existingUser));
