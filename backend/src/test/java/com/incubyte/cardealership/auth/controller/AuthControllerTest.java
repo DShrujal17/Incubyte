@@ -86,4 +86,19 @@ class AuthControllerTest {
                             """))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void shouldReturnBadRequestWhenNameIsBlank() throws Exception {
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                                "name":"",
+                                "email":"shrujal@gmail.com",
+                                "password":"password123"
+                            }
+                            """))
+                .andExpect(status().isBadRequest());
+    }
 }
