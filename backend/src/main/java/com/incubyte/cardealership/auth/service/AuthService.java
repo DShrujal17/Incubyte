@@ -15,6 +15,10 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
 
+        if (!request.email().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Invalid email");
+        }
+
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
