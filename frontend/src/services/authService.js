@@ -8,5 +8,4 @@ export const register = async (userData) => {
     );
 
     return response.data;
-
 };
