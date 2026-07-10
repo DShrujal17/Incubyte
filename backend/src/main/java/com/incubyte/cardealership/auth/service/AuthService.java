@@ -8,7 +8,9 @@ import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -28,12 +30,12 @@ public class AuthService {
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        User user = new User(
-                request.name(),
-                request.email(),
-                encodedPassword,
-                Role.USER
-        );
+        User user = User.builder()
+                .name(request.name())
+                .email(request.email())
+                .password(encodedPassword)
+                .role(Role.USER)
+                .build();
 
         userRepository.save(user);
 
