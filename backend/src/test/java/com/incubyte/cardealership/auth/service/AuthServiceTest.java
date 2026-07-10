@@ -79,4 +79,19 @@ class AuthServiceTest {
                 () -> authService.register(request)
         );
     }
+
+    @Test
+    void shouldThrowExceptionWhenEmailIsInvalid() {
+
+        RegisterRequest request = new RegisterRequest(
+                "Shrujal",
+                "invalid-email",
+                "password123"
+        );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> authService.register(request)
+        );
+    }
 }
