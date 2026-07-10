@@ -1,15 +1,25 @@
 package com.incubyte.cardealership.auth.service;
 
+import com.incubyte.cardealership.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private AuthService authService;
 
     @Test
     void shouldRegisterUserSuccessfully() {
-
-        AuthService authService = new AuthService();
 
         RegisterRequest request = new RegisterRequest(
                 "Shrujal",
