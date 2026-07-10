@@ -5,14 +5,15 @@ import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.user.entity.Role;
 import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public RegisterResponse register(RegisterRequest request) {
 
@@ -24,10 +25,12 @@ public class AuthService {
             throw new IllegalArgumentException("Email already exists");
         }
 
+        String encodedPassword = passwordEncoder.encode(request.password());
+
         User user = new User(
                 request.name(),
                 request.email(),
-                request.password(),
+                encodedPassword,
                 Role.USER
         );
 
