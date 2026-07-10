@@ -2,6 +2,7 @@ package com.incubyte.cardealership.auth.controller;
 
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.incubyte.cardealership.auth.service.AuthService;
 import com.incubyte.cardealership.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
@@ -51,5 +52,23 @@ class AuthControllerTest {
                                 }
                                 """))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
+
+        when(authService.register(any(RegisterRequest.class)))
+                .thenThrow(new EmailAlreadyExistsException("Email already exists"));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                                "name":"Shrujal",
+                                "email":"shrujal@gmail.com",
+                                "password":"password123"
+                            }
+                            """))
+                .andExpect(status().isConflict());
     }
 }
