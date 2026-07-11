@@ -33,6 +33,9 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -214,12 +217,21 @@ class AuthServiceTest {
         when(userRepository.findByEmail(request.email()))
                 .thenReturn(Optional.of(user));
 
-        when(passwordEncoder.matches(request.password(), user.getPassword()))
+        when(passwordEncoder.matches(
+                request.password(),
+                user.getPassword()))
                 .thenReturn(true);
+
+        when(jwtService.generateToken(user))
+                .thenReturn("dummy-jwt-token");
 
         LoginResponse response = authService.login(request);
 
         assertEquals("Login successful", response.message());
-        assertNotNull(response.token());
+        assertEquals("dummy-jwt-token", response.token());
+
+        verify(userRepository).findByEmail(request.email());
+        verify(passwordEncoder).matches(request.password(), user.getPassword());
+        verify(jwtService).generateToken(user);
     }
 }

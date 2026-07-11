@@ -18,7 +18,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JwtService jwtService;
 
     public RegisterResponse register(RegisterRequest request) {
 
@@ -56,6 +56,11 @@ public class AuthService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return new LoginResponse("Login successful");
+        String token = jwtService.generateToken(user);
+
+        return new LoginResponse(
+                "Login successful",
+                token
+        );
     }
 }
