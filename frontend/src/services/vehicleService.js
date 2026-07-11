@@ -47,3 +47,13 @@ export const searchVehicles = async (filters) => {
     const response = await axios.get(`${API_URL}/search`, config);
     return response.data;
 };
+
+export const purchaseVehicle = async (id) => {
+    const response = await axios.post(`${API_URL}/${id}/purchase`, null, getHeaders());
+    return response.data;
+};
+
+export const restockVehicle = async (id, quantity) => {
+    const response = await axios.post(`${API_URL}/${id}/restock`, { quantity }, getHeaders());
+    return response.data;
+};

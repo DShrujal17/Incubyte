@@ -1,6 +1,6 @@
 import { vi, describe, test, expect, beforeEach, afterEach } from "vitest";
 import axios from "axios";
-import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } from "./vehicleService";
+import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles, purchaseVehicle, restockVehicle } from "./vehicleService";
 
 vi.mock("axios");
 
@@ -97,5 +97,39 @@ describe("Vehicle Service", () => {
                 },
             }
         );
+    });
+
+    test("should purchase vehicle with Authorization header", async () => {
+        axios.post.mockResolvedValue({ data: { id: 1, quantity: 4 } });
+
+        const result = await purchaseVehicle(1);
+
+        expect(axios.post).toHaveBeenCalledWith(
+            "http://localhost:8080/api/vehicles/1/purchase",
+            null,
+            {
+                headers: {
+                    Authorization: "Bearer dummy-jwt-token",
+                },
+            }
+        );
+        expect(result).toEqual({ id: 1, quantity: 4 });
+    });
+
+    test("should restock vehicle with Authorization header", async () => {
+        axios.post.mockResolvedValue({ data: { id: 1, quantity: 15 } });
+
+        const result = await restockVehicle(1, 10);
+
+        expect(axios.post).toHaveBeenCalledWith(
+            "http://localhost:8080/api/vehicles/1/restock",
+            { quantity: 10 },
+            {
+                headers: {
+                    Authorization: "Bearer dummy-jwt-token",
+                },
+            }
+        );
+        expect(result).toEqual({ id: 1, quantity: 15 });
     });
 });

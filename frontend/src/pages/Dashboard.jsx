@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } from "../services/vehicleService";
+import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles, purchaseVehicle, restockVehicle } from "../services/vehicleService";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -13,6 +13,10 @@ export default function Dashboard() {
     const [userRole, setUserRole] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [vehicleToDeleteId, setVehicleToDeleteId] = useState(null);
+    const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+    const [vehicleToRestockId, setVehicleToRestockId] = useState(null);
+    const [restockQty, setRestockQty] = useState(1);
+    const [actionMessage, setActionMessage] = useState("");
 
     const [formData, setFormData] = useState({
         make: "",
@@ -165,6 +169,36 @@ export default function Dashboard() {
         }
     };
 
+    const handlePurchase = async (id) => {
+        try {
+            await purchaseVehicle(id);
+            setActionMessage("Purchase successful! Vehicle quantity updated.");
+            fetchVehicles();
+            setTimeout(() => setActionMessage(""), 3000);
+        } catch (err) {
+            setActionMessage(err.response?.data?.message || "Purchase failed — vehicle may be out of stock.");
+            setTimeout(() => setActionMessage(""), 3000);
+        }
+    };
+
+    const handleOpenRestockModal = (id) => {
+        setVehicleToRestockId(id);
+        setRestockQty(1);
+        setIsRestockModalOpen(true);
+    };
+
+    const handleConfirmRestock = async () => {
+        try {
+            await restockVehicle(vehicleToRestockId, restockQty);
+            setIsRestockModalOpen(false);
+            setActionMessage(`Restocked successfully with ${restockQty} unit(s).`);
+            fetchVehicles();
+            setTimeout(() => setActionMessage(""), 3000);
+        } catch (err) {
+            console.error("Failed to restock vehicle:", err);
+        }
+    };
+
     return (
         <div className="dashboard-container">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
@@ -279,17 +313,52 @@ export default function Dashboard() {
                                 <td style={{ padding: "12px 16px" }}>{v.price}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.category}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.quantity}</td>
-                                <td style={{ padding: "12px 16px" }}>{v.status}</td>
-                                {userRole === "ADMIN" && (
-                                    <td style={{ padding: "12px 16px" }}>
-                                        <button className="auth-button" style={{ width: "auto", padding: "6px 12px", marginRight: "8px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
-                                        <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
-                                    </td>
-                                )}
+                                <td style={{ padding: "12px 16px" }}>
+                                    <span style={{
+                                        padding: "3px 10px",
+                                        borderRadius: "12px",
+                                        fontSize: "12px",
+                                        fontWeight: 600,
+                                        background: v.status === "AVAILABLE" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
+                                        color: v.status === "AVAILABLE" ? "#22c55e" : "#ef4444"
+                                    }}>{v.status}</span>
+                                </td>
+                                <td style={{ padding: "12px 16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                    {userRole === "ADMIN" && (
+                                        <>
+                                            <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
+                                            <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
+                                            <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
+                                        </>
+                                    )}
+                                    {userRole === "USER" && v.status === "AVAILABLE" && (
+                                        <button className="auth-button" style={{ width: "auto", padding: "6px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
+                                    )}
+                                    {userRole === "USER" && v.status === "SOLD" && (
+                                        <span style={{ color: "var(--text)", fontSize: "13px", padding: "6px 0" }}>Out of Stock</span>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {actionMessage && (
+                <div style={{
+                    position: "fixed",
+                    bottom: "24px",
+                    right: "24px",
+                    background: "var(--code-bg)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "10px",
+                    padding: "14px 20px",
+                    color: "var(--text-h)",
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+                    zIndex: 9999,
+                    maxWidth: "320px",
+                    fontSize: "14px"
+                }}>{actionMessage}</div>
             )}
 
             {isModalOpen && (
@@ -403,6 +472,31 @@ export default function Dashboard() {
                         <div className="modal-actions">
                             <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
                             <button className="auth-button btn-danger" style={{ width: "auto", padding: "10px 20px" }} onClick={handleConfirmDelete}>Yes, Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isRestockModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-card" style={{ maxWidth: "400px" }}>
+                        <div className="modal-header">
+                            <h2>Restock Vehicle</h2>
+                            <button className="modal-close" onClick={() => setIsRestockModalOpen(false)}>&times;</button>
+                        </div>
+                        <div className="form-group" style={{ margin: "16px 0" }}>
+                            <label htmlFor="restock-quantity" style={{ display: "block", marginBottom: "8px" }}>Quantity to Add</label>
+                            <input
+                                id="restock-quantity"
+                                type="number"
+                                min={1}
+                                value={restockQty}
+                                onChange={(e) => setRestockQty(Number(e.target.value))}
+                                style={{ width: "100%", padding: "12px 16px", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text-h)", font: "inherit" }}
+                            />
+                        </div>
+                        <div className="modal-actions">
+                            <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsRestockModalOpen(false)}>Cancel</button>
+                            <button className="auth-button" style={{ width: "auto", padding: "10px 20px", background: "#7c3aed" }} onClick={handleConfirmRestock}>Confirm Restock</button>
                         </div>
                     </div>
                 </div>
