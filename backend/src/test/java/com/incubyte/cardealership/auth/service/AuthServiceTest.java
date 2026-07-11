@@ -161,4 +161,35 @@ class AuthServiceTest {
 
         assertEquals("encodedPassword", savedUser.getPassword());
     }
+
+    // LOGIN //
+    @Test
+    void shouldLoginSuccessfully() {
+
+        User user = User.builder()
+                .name("Shrujal")
+                .email("shrujal@gmail.com")
+                .password("encodedPassword")
+                .role(Role.USER)
+                .build();
+
+        LoginRequest request = new LoginRequest(
+                "shrujal@gmail.com",
+                "password123"
+        );
+
+        when(userRepository.findByEmail(request.email()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.password(),
+                user.getPassword()))
+                .thenReturn(true);
+
+        LoginResponse response = authService.login(request);
+
+        assertEquals("Login successful", response.message());
+
+        verify(userRepository).findByEmail(request.email());
+    }
 }
