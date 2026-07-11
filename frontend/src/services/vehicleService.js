@@ -30,3 +30,20 @@ export const deleteVehicle = async (id) => {
     const response = await axios.delete(`${API_URL}/${id}`, getHeaders());
     return response.data;
 };
+
+export const searchVehicles = async (filters) => {
+    const params = new URLSearchParams();
+    if (filters.make) params.append("make", filters.make);
+    if (filters.model) params.append("model", filters.model);
+    if (filters.category) params.append("category", filters.category);
+    if (filters.minPrice) params.append("minPrice", filters.minPrice);
+    if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
+
+    const config = {
+        ...getHeaders(),
+        params: params
+    };
+
+    const response = await axios.get(`${API_URL}/search`, config);
+    return response.data;
+};
