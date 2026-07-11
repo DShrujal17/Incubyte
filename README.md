@@ -295,7 +295,6 @@ DELETE /api/vehicles/{id}
 
 AI tools used:
 - ChatGPT
-- Antigravity (Google DeepMind)
 
 How AI was used:
 - Discussed project architecture.
