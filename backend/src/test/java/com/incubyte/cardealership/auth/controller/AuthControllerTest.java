@@ -4,7 +4,9 @@ import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.incubyte.cardealership.auth.service.AuthService;
+import com.incubyte.cardealership.auth.service.JwtService;
 import com.incubyte.cardealership.config.SecurityConfig;
+import com.incubyte.cardealership.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -30,6 +32,12 @@ class AuthControllerTest {
 
     @MockitoBean
     private AuthService authService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private UserRepository userRepository;
 
     @Test
     void shouldRegisterUserSuccessfully() throws Exception {
