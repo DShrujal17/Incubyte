@@ -6,6 +6,8 @@ import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.incubyte.cardealership.auth.service.AuthService;
 import com.incubyte.cardealership.auth.service.JwtService;
 import com.incubyte.cardealership.config.SecurityConfig;
+import com.incubyte.cardealership.user.entity.Role;
+import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -137,5 +142,27 @@ class AuthControllerTest {
                             }
                             """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldBlockProtectedEndpointWithoutJwt() throws Exception {
+        mockMvc.perform(get("/api/test-protected"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldAllowProtectedEndpointWithValidJwt() throws Exception {
+        when(jwtService.extractEmail("valid-jwt")).thenReturn("shrujal@gmail.com");
+        when(jwtService.isTokenValid("valid-jwt", "shrujal@gmail.com")).thenReturn(true);
+
+        User user = User.builder()
+                .email("shrujal@gmail.com")
+                .role(Role.USER)
+                .build();
+        when(userRepository.findByEmail("shrujal@gmail.com")).thenReturn(Optional.of(user));
+
+        mockMvc.perform(get("/api/test-protected")
+                        .header("Authorization", "Bearer valid-jwt"))
+                .andExpect(status().isNotFound()); // non-401/403 status (returns 404 because the endpoint does not exist)
     }
 }
