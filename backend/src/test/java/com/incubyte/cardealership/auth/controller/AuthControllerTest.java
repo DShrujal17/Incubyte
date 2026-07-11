@@ -30,6 +30,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(AuthController.class)
 @Import(SecurityConfig.class)
@@ -173,7 +174,8 @@ class AuthControllerTest {
     void shouldLoginSuccessfully() throws Exception {
         LoginResponse response = new LoginResponse(
                 "Login successful",
-                "dummy-jwt-token"
+                "dummy-jwt-token",
+                "USER"
         );
 
         when(authService.login(any(LoginRequest.class)))
@@ -187,7 +189,8 @@ class AuthControllerTest {
                                   "password":"password123"
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value("USER"));
     }
 
     @Test

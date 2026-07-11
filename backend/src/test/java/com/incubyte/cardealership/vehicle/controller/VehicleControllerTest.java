@@ -51,11 +51,20 @@ class VehicleControllerTest {
         when(jwtService.extractEmail("valid-jwt")).thenReturn("shrujal@gmail.com");
         when(jwtService.isTokenValid("valid-jwt", "shrujal@gmail.com")).thenReturn(true);
 
-        User user = User.builder()
+        User admin = User.builder()
                 .email("shrujal@gmail.com")
+                .role(Role.ADMIN)
+                .build();
+        when(userRepository.findByEmail("shrujal@gmail.com")).thenReturn(Optional.of(admin));
+
+        when(jwtService.extractEmail("user-jwt")).thenReturn("user@gmail.com");
+        when(jwtService.isTokenValid("user-jwt", "user@gmail.com")).thenReturn(true);
+
+        User user = User.builder()
+                .email("user@gmail.com")
                 .role(Role.USER)
                 .build();
-        when(userRepository.findByEmail("shrujal@gmail.com")).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("user@gmail.com")).thenReturn(Optional.of(user));
     }
 
     @Test
@@ -237,5 +246,48 @@ class VehicleControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(vehicleService).deleteVehicle(1L);
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminTriesToCreateVehicle() throws Exception {
+        mockMvc.perform(post("/api/vehicles")
+                        .header("Authorization", "Bearer user-jwt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "vin":"12345678901234567",
+                                  "make":"Toyota",
+                                  "model":"Camry",
+                                  "year":2024,
+                                  "price":35000.00,
+                                  "status":"AVAILABLE"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminTriesToUpdateVehicle() throws Exception {
+        mockMvc.perform(put("/api/vehicles/1")
+                        .header("Authorization", "Bearer user-jwt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "vin":"12345678901234567",
+                                  "make":"Toyota Updated",
+                                  "model":"Camry Updated",
+                                  "year":2025,
+                                  "price":38000.00,
+                                  "status":"SOLD"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminTriesToDeleteVehicle() throws Exception {
+        mockMvc.perform(delete("/api/vehicles/1")
+                        .header("Authorization", "Bearer user-jwt"))
+                .andExpect(status().isForbidden());
     }
 }

@@ -227,10 +227,11 @@ class AuthServiceTest {
                 .thenReturn("dummy-jwt-token");
 
         LoginResponse response = authService.login(request);
-
+ 
         assertEquals("Login successful", response.message());
         assertEquals("dummy-jwt-token", response.token());
-
+        assertEquals("USER", response.role());
+ 
         verify(userRepository).findByEmail(request.email());
         verify(passwordEncoder).matches(request.password(), user.getPassword());
         verify(jwtService).generateToken(user);
