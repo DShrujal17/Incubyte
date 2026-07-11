@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../services/authService";
 
 export default function Login() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -19,6 +21,7 @@ export default function Login() {
         const responseData = await login(formData);
         if (responseData && responseData.token) {
             localStorage.setItem("token", responseData.token);
+            navigate("/dashboard");
         }
     };
 
