@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle } from "../services/vehicleService";
 
 export default function Dashboard() {
+    const navigate = useNavigate();
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState("add"); // "add" or "edit"
     const [editingVehicleId, setEditingVehicleId] = useState(null);
     const [error, setError] = useState("");
+    const [userRole, setUserRole] = useState("");
 
     const [formData, setFormData] = useState({
         vin: "",
@@ -31,8 +34,14 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+        setUserRole(localStorage.getItem("role") || "USER");
         fetchVehicles();
-    }, []);
+    }, [navigate]);
 
     const handleInputChange = (event) => {
         setFormData({
@@ -111,7 +120,9 @@ export default function Dashboard() {
         <div className="dashboard-container">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <h1 style={{ margin: 0 }}>Dashboard</h1>
-                <button className="auth-button" style={{ width: "auto", padding: "10px 20px" }} onClick={handleOpenAddModal}>Add Vehicle</button>
+                {userRole === "ADMIN" && (
+                    <button className="auth-button" style={{ width: "auto", padding: "10px 20px" }} onClick={handleOpenAddModal}>Add Vehicle</button>
+                )}
             </div>
 
             {loading ? (
@@ -128,7 +139,7 @@ export default function Dashboard() {
                             <th style={{ padding: "12px 16px" }}>Year</th>
                             <th style={{ padding: "12px 16px" }}>Price</th>
                             <th style={{ padding: "12px 16px" }}>Status</th>
-                            <th style={{ padding: "12px 16px" }}>Actions</th>
+                            {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -140,10 +151,12 @@ export default function Dashboard() {
                                 <td style={{ padding: "12px 16px" }}>{v.year}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.price}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.status}</td>
-                                <td style={{ padding: "12px 16px" }}>
-                                    <button className="auth-button" style={{ width: "auto", padding: "6px 12px", marginRight: "8px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
-                                    <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
-                                </td>
+                                {userRole === "ADMIN" && (
+                                    <td style={{ padding: "12px 16px" }}>
+                                        <button className="auth-button" style={{ width: "auto", padding: "6px 12px", marginRight: "8px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
+                                        <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
+                                    </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>
