@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JwtServiceTest {
 
@@ -28,5 +29,11 @@ class JwtServiceTest {
         String token = jwtService.generateToken(user);
         String extractedEmail = jwtService.extractEmail(token);
         assertEquals("shrujal@gmail.com", extractedEmail);
+    }
+
+    @Test
+    void shouldValidateTokenSuccessfully() {
+        String token = jwtService.generateToken(user);
+        assertTrue(jwtService.isTokenValid(token, user.getEmail()));
     }
 }
