@@ -9,3 +9,7 @@ export const register = async (userData) => {
 
     return response.data;
 };
+
+export const login = async (credentials) => {
+    // placeholder
+};
