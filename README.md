@@ -157,15 +157,31 @@ RED → GREEN → REFACTOR
 
 ---
 
-# ⚙️ Backend Setup
+# 🚀 Quick Start (Single Command)
 
-## 1. Clone Repository
+You can launch both the Spring Boot backend and React dev frontend concurrently using a single command from the repository root:
 
+## 1. Clone & Setup Databases
 ```bash
 git clone https://github.com/DShrujal17/Incubyte.git
+cd car-dealership-inventory
 ```
+Configure your local PostgreSQL settings in `backend/src/main/resources/application.properties` first.
 
-## 2. Navigate to Backend
+## 2. Install Root dependencies & Start
+```bash
+npm install
+npm run start
+```
+This runs:
+* **Backend**: `http://localhost:8080`
+* **Frontend**: `http://localhost:5174`
+
+---
+
+# ⚙️ Backend Setup
+
+## 1. Navigate to Backend
 
 ```bash
 cd car-dealership-inventory/backend
