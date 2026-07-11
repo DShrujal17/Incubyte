@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -65,8 +66,9 @@ public class VehicleController {
     }
 
     @PostMapping("/{id}/purchase")
-    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable Long id) {
-        VehicleResponse response = vehicleService.purchaseVehicle(id);
+    public ResponseEntity<VehicleResponse> purchaseVehicle(@PathVariable Long id,
+                                                           Authentication authentication) {
+        VehicleResponse response = vehicleService.purchaseVehicle(id, authentication.getName());
         return ResponseEntity.ok(response);
     }
 

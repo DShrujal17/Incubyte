@@ -1,5 +1,7 @@
 package com.incubyte.cardealership.vehicle.service;
 
+import com.incubyte.cardealership.sale.repository.SaleRepository;
+import com.incubyte.cardealership.sale.entity.Sale;
 import com.incubyte.cardealership.vehicle.dto.*;
 import com.incubyte.cardealership.vehicle.entity.Vehicle;
 import com.incubyte.cardealership.vehicle.entity.VehicleStatus;
@@ -25,6 +27,9 @@ class VehicleServiceTest {
 
     @Mock
     private VehicleRepository vehicleRepository;
+
+    @Mock
+    private SaleRepository saleRepository;
 
     @InjectMocks
     private VehicleService vehicleService;
@@ -203,8 +208,9 @@ class VehicleServiceTest {
 
         when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
         when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(saleRepository.save(any(Sale.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        VehicleResponse response = vehicleService.purchaseVehicle(1L);
+        VehicleResponse response = vehicleService.purchaseVehicle(1L, "buyer@test.com");
 
         assertEquals(4, response.quantity());
         assertEquals(VehicleStatus.AVAILABLE, response.status());
@@ -220,8 +226,9 @@ class VehicleServiceTest {
 
         when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
         when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(saleRepository.save(any(Sale.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        VehicleResponse response = vehicleService.purchaseVehicle(1L);
+        VehicleResponse response = vehicleService.purchaseVehicle(1L, "buyer@test.com");
 
         assertEquals(0, response.quantity());
         assertEquals(VehicleStatus.SOLD, response.status());
@@ -237,8 +244,8 @@ class VehicleServiceTest {
 
         when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
 
-        assertThrows(com.incubyte.cardealership.vehicle.exception.OutOfStockException.class, 
-                () -> vehicleService.purchaseVehicle(1L));
+        assertThrows(com.incubyte.cardealership.vehicle.exception.OutOfStockException.class,
+                () -> vehicleService.purchaseVehicle(1L, "buyer@test.com"));
     }
 
     @Test

@@ -271,7 +271,7 @@ class VehicleControllerTest {
                 1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE, "Sedan", 4
         );
 
-        when(vehicleService.purchaseVehicle(1L)).thenReturn(response);
+        when(vehicleService.purchaseVehicle(eq(1L), any(String.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/vehicles/1/purchase")
                         .header("Authorization", "Bearer user-jwt"))

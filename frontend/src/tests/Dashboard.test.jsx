@@ -4,6 +4,7 @@ import { vi, describe, test, expect, beforeEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import * as vehicleService from "../services/vehicleService";
+import * as saleService from "../services/saleService";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
@@ -15,6 +16,7 @@ vi.mock("react-router-dom", async (importOriginal) => {
 });
 
 vi.mock("../services/vehicleService");
+vi.mock("../services/saleService");
 
 describe("Dashboard Page", () => {
     beforeEach(() => {
@@ -305,5 +307,84 @@ describe("Dashboard Page", () => {
         expect(vehicleService.searchVehicles).toHaveBeenCalledWith(expect.objectContaining({
             make: "Toyota",
         }));
+    });
+
+    test("should fetch and render personal purchases for USER when My Purchases tab is clicked", async () => {
+        vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+            if (key === "token") return "valid-token";
+            if (key === "role") return "USER";
+            return null;
+        });
+
+        vehicleService.getAllVehicles.mockResolvedValue([]);
+        const mockPurchases = [
+            {
+                id: 101,
+                buyerEmail: "user@test.com",
+                vehicleMake: "Honda",
+                vehicleModel: "Civic",
+                vehicleYear: 2022,
+                purchasePrice: 24000,
+                purchasedAt: "2026-07-11T12:00:00Z"
+            }
+        ];
+        saleService.getMySales.mockResolvedValue(mockPurchases);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        // Click the My Purchases tab
+        const purchasesTab = await screen.findByText(/My Purchases/i);
+        await userEvent.click(purchasesTab);
+
+        expect(saleService.getMySales).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(screen.getByText("Honda")).toBeInTheDocument();
+            expect(screen.getByText("Civic")).toBeInTheDocument();
+            expect(screen.getByText("24000")).toBeInTheDocument();
+        });
+    });
+
+    test("should fetch and render all sales for ADMIN when Sales History tab is clicked", async () => {
+        vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+            if (key === "token") return "valid-token";
+            if (key === "role") return "ADMIN";
+            return null;
+        });
+
+        vehicleService.getAllVehicles.mockResolvedValue([]);
+        const mockAllSales = [
+            {
+                id: 201,
+                buyerEmail: "customer@test.com",
+                vehicleMake: "Ford",
+                vehicleModel: "Mustang",
+                vehicleYear: 2023,
+                purchasePrice: 45000,
+                purchasedAt: "2026-07-11T13:00:00Z"
+            }
+        ];
+        saleService.getAllSales.mockResolvedValue(mockAllSales);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        // Click the Sales History tab
+        const salesHistoryTab = await screen.findByText(/Sales History/i);
+        await userEvent.click(salesHistoryTab);
+
+        expect(saleService.getAllSales).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(screen.getByText("customer@test.com")).toBeInTheDocument();
+            expect(screen.getByText("Ford")).toBeInTheDocument();
+            expect(screen.getByText("Mustang")).toBeInTheDocument();
+            expect(screen.getByText("45000")).toBeInTheDocument();
+        });
     });
 });

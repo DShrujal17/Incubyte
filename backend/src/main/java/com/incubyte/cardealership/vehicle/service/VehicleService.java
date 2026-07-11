@@ -6,10 +6,13 @@ import com.incubyte.cardealership.vehicle.entity.VehicleStatus;
 import com.incubyte.cardealership.vehicle.exception.OutOfStockException;
 import com.incubyte.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.cardealership.vehicle.repository.VehicleRepository;
+import com.incubyte.cardealership.sale.entity.Sale;
+import com.incubyte.cardealership.sale.repository.SaleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,6 +20,7 @@ import java.util.List;
 public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
+    private final SaleRepository saleRepository;
 
     public VehicleResponse createVehicle(VehicleRequest request) {
         VehicleStatus status = request.status() != null ? request.status() : VehicleStatus.AVAILABLE;
@@ -79,7 +83,7 @@ public class VehicleService {
                 .toList();
     }
 
-    public VehicleResponse purchaseVehicle(Long id) {
+    public VehicleResponse purchaseVehicle(Long id, String buyerEmail) {
         Vehicle vehicle = findOrThrow(id);
 
         if (vehicle.getQuantity() <= 0) {
@@ -91,7 +95,18 @@ public class VehicleService {
             vehicle.setStatus(VehicleStatus.SOLD);
         }
 
-        return mapToResponse(vehicleRepository.save(vehicle));
+        VehicleResponse saved = mapToResponse(vehicleRepository.save(vehicle));
+
+        saleRepository.save(Sale.builder()
+                .buyerEmail(buyerEmail)
+                .vehicleMake(vehicle.getMake())
+                .vehicleModel(vehicle.getModel())
+                .vehicleYear(vehicle.getYear())
+                .purchasePrice(vehicle.getPrice())
+                .purchasedAt(LocalDateTime.now())
+                .build());
+
+        return saved;
     }
 
     public VehicleResponse restockVehicle(Long id, Integer quantity) {
