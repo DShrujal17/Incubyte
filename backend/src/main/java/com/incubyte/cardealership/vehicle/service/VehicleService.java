@@ -19,14 +19,9 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
 
     public VehicleResponse createVehicle(VehicleRequest request) {
-        if (vehicleRepository.findByVin(request.vin()).isPresent()) {
-            throw new DuplicateVinException("Vehicle with VIN " + request.vin() + " already exists");
-        }
-
         VehicleStatus status = request.status() != null ? request.status() : VehicleStatus.AVAILABLE;
 
         Vehicle vehicle = Vehicle.builder()
-                .vin(request.vin())
                 .make(request.make())
                 .model(request.model())
                 .year(request.year())
@@ -75,7 +70,6 @@ public class VehicleService {
     private VehicleResponse mapToResponse(Vehicle vehicle) {
         return new VehicleResponse(
                 vehicle.getId(),
-                vehicle.getVin(),
                 vehicle.getMake(),
                 vehicle.getModel(),
                 vehicle.getYear(),

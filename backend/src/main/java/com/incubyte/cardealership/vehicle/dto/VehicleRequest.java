@@ -6,10 +6,6 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public record VehicleRequest(
-        @NotBlank(message = "VIN is required")
-        @Size(min = 17, max = 17, message = "VIN must be exactly 17 characters")
-        String vin,
-
         @NotBlank(message = "Make is required")
         String make,
 

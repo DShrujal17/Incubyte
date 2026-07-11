@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 
 public record VehicleResponse(
         Long id,
-        String vin,
         String make,
         String model,
         Integer year,
