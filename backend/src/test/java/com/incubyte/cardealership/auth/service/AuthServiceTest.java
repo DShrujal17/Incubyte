@@ -1,5 +1,7 @@
 package com.incubyte.cardealership.auth.service;
 
+import com.incubyte.cardealership.auth.dto.LoginRequest;
+import com.incubyte.cardealership.auth.dto.LoginResponse;
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.user.entity.Role;

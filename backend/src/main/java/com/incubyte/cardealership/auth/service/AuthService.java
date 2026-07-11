@@ -1,5 +1,7 @@
 package com.incubyte.cardealership.auth.service;
 
+import com.incubyte.cardealership.auth.dto.LoginRequest;
+import com.incubyte.cardealership.auth.dto.LoginResponse;
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
@@ -43,5 +45,17 @@ public class AuthService {
                 request.name(),
                 request.email()
         );
+    }
+
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        return new LoginResponse("Login successful");
     }
 }
