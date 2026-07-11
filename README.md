@@ -117,11 +117,18 @@ car-dealership-inventory/
 
 ---
 
+## 📊 Sales Tracking & Purchase History
+- **My Purchases (User Role)**: Users see a dedicated tab listing all vehicles they have bought, including the purchase price and exact purchase date.
+- **Sales History (Admin Role)**: Admins see a master dashboard tab of all sales records made by all users, including the buyer's email, make, model, year, paid price, and timestamp.
+- Every successful vehicle purchase automatically logs a permanent `Sale` record in the database.
+
+---
+
 # 🧪 Testing
 
 The entire project follows **TDD (Test-Driven Development)** — every feature starts with a failing test (RED), then implementation (GREEN), then cleanup (REFACTOR).
 
-## Backend — 50 tests
+## Backend — 57 tests
 | Test Class | Coverage |
 |---|---|
 | `AuthControllerTest` | Register, Login, validation errors, role responses |
@@ -131,15 +138,18 @@ The entire project follows **TDD (Test-Driven Development)** — every feature s
 | `DataInitializerTest` | Admin seeding on startup |
 | `VehicleControllerTest` | All CRUD, Search, Purchase, Restock, RBAC |
 | `VehicleServiceTest` | All CRUD, Search, Purchase, Restock, OutOfStock exception |
+| `SaleControllerTest` | Security and access rules for personal and global sales history |
+| `SaleServiceTest` | User sales filtering, admin master list retrieval |
 
-## Frontend — 22 tests
+## Frontend — 24 tests
 | Test File | Coverage |
 |---|---|
 | `authService.test.js` | Login and register API calls with headers |
 | `vehicleService.test.js` | All vehicle API calls including purchase and restock |
+| `saleService.js` | API endpoints to fetch customer and admin sales |
 | `Login.test.jsx` | Form submission, JWT storage, redirect, error display |
 | `Register.test.jsx` | Form submission and service call |
-| `Dashboard.test.jsx` | Add vehicle modal, edit modal with prefilled data |
+| `Dashboard.test.jsx` | Add/Edit/Delete modals, Search, and My Purchases / Sales History tabs |
 
 ```
 RED → GREEN → REFACTOR
