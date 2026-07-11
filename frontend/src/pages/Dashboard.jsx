@@ -11,6 +11,8 @@ export default function Dashboard() {
     const [editingVehicleId, setEditingVehicleId] = useState(null);
     const [error, setError] = useState("");
     const [userRole, setUserRole] = useState("");
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [vehicleToDeleteId, setVehicleToDeleteId] = useState(null);
 
     const [formData, setFormData] = useState({
         vin: "",
@@ -105,14 +107,18 @@ export default function Dashboard() {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this vehicle?")) {
-            try {
-                await deleteVehicle(id);
-                fetchVehicles();
-            } catch (err) {
-                console.error("Failed to delete vehicle:", err);
-            }
+    const handleDelete = (id) => {
+        setVehicleToDeleteId(id);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await deleteVehicle(vehicleToDeleteId);
+            setIsDeleteModalOpen(false);
+            fetchVehicles();
+        } catch (err) {
+            console.error("Failed to delete vehicle:", err);
         }
     };
 
@@ -250,6 +256,21 @@ export default function Dashboard() {
                                 <button type="submit" className="auth-button" style={{ width: "auto", padding: "10px 20px" }}>Save</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {isDeleteModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-card" style={{ maxWidth: "400px" }}>
+                        <div className="modal-header">
+                            <h2>Confirm Delete</h2>
+                            <button className="modal-close" onClick={() => setIsDeleteModalOpen(false)}>&times;</button>
+                        </div>
+                        <p style={{ margin: "0 0 24px 0", color: "var(--text)" }}>Are you sure you want to delete this vehicle?</p>
+                        <div className="modal-actions">
+                            <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+                            <button className="auth-button btn-danger" style={{ width: "auto", padding: "10px 20px" }} onClick={handleConfirmDelete}>Yes, Delete</button>
+                        </div>
                     </div>
                 </div>
             )}
