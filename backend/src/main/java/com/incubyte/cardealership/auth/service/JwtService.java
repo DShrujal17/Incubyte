@@ -36,4 +36,19 @@ public class JwtService {
                 .getPayload()
                 .getSubject();
     }
+
+    public boolean isTokenValid(String token, String userEmail) {
+        final String email = extractEmail(token);
+        return (email.equals(userEmail) && !isTokenExpired(token));
+    }
+
+    private boolean isTokenExpired(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new Date());
+    }
 }
