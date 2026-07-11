@@ -20,6 +20,8 @@ export default function Dashboard() {
         year: "",
         price: "",
         status: "AVAILABLE",
+        category: "",
+        quantity: "",
     });
 
     const fetchVehicles = async () => {
@@ -59,6 +61,8 @@ export default function Dashboard() {
             year: "",
             price: "",
             status: "AVAILABLE",
+            category: "",
+            quantity: "",
         });
         setError("");
         setIsModalOpen(true);
@@ -73,6 +77,8 @@ export default function Dashboard() {
             year: vehicle.year.toString(),
             price: vehicle.price.toString(),
             status: vehicle.status,
+            category: vehicle.category || "",
+            quantity: vehicle.quantity != null ? vehicle.quantity.toString() : "",
         });
         setError("");
         setIsModalOpen(true);
@@ -88,6 +94,8 @@ export default function Dashboard() {
             year: parseInt(formData.year, 10),
             price: parseFloat(formData.price),
             status: formData.status,
+            category: formData.category,
+            quantity: parseInt(formData.quantity, 10),
         };
 
         try {
@@ -139,6 +147,8 @@ export default function Dashboard() {
                             <th style={{ padding: "12px 16px" }}>Model</th>
                             <th style={{ padding: "12px 16px" }}>Year</th>
                             <th style={{ padding: "12px 16px" }}>Price</th>
+                            <th style={{ padding: "12px 16px" }}>Category</th>
+                            <th style={{ padding: "12px 16px" }}>Quantity</th>
                             <th style={{ padding: "12px 16px" }}>Status</th>
                             {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Actions</th>}
                         </tr>
@@ -150,6 +160,8 @@ export default function Dashboard() {
                                 <td style={{ padding: "12px 16px" }}>{v.model}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.year}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.price}</td>
+                                <td style={{ padding: "12px 16px" }}>{v.category}</td>
+                                <td style={{ padding: "12px 16px" }}>{v.quantity}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.status}</td>
                                 {userRole === "ADMIN" && (
                                     <td style={{ padding: "12px 16px" }}>
@@ -216,6 +228,29 @@ export default function Dashboard() {
                                     value={formData.price}
                                     onChange={handleInputChange}
                                     min={0.01}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="category">Category</label>
+                                <input
+                                    id="category"
+                                    name="category"
+                                    type="text"
+                                    value={formData.category}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="quantity">Quantity</label>
+                                <input
+                                    id="quantity"
+                                    name="quantity"
+                                    type="number"
+                                    value={formData.quantity}
+                                    onChange={handleInputChange}
+                                    min={0}
                                     required
                                 />
                             </div>
