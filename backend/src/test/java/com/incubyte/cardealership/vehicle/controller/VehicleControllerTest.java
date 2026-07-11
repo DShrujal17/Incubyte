@@ -72,7 +72,6 @@ class VehicleControllerTest {
     void shouldCreateVehicleSuccessfully() throws Exception {
         VehicleResponse response = new VehicleResponse(
                 1L,
-                "12345678901234567",
                 "Toyota",
                 "Camry",
                 2024,
@@ -88,7 +87,6 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "vin":"12345678901234567",
                                   "make":"Toyota",
                                   "model":"Camry",
                                   "year":2024,
@@ -98,70 +96,13 @@ class VehicleControllerTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.vin").value("12345678901234567"))
                 .andExpect(jsonPath("$.make").value("Toyota"));
-    }
-
-    @Test
-    void shouldReturnConflictWhenVinIsDuplicate() throws Exception {
-        when(vehicleService.createVehicle(any(VehicleRequest.class)))
-                .thenThrow(new DuplicateVinException("Vehicle with VIN already exists"));
-
-        mockMvc.perform(post("/api/vehicles")
-                        .header("Authorization", "Bearer valid-jwt")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "vin":"12345678901234567",
-                                  "make":"Toyota",
-                                  "model":"Camry",
-                                  "year":2024,
-                                  "price":35000.00,
-                                  "status":"AVAILABLE"
-                                }
-                                """))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenVinIsBlank() throws Exception {
-        mockMvc.perform(post("/api/vehicles")
-                        .header("Authorization", "Bearer valid-jwt")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "vin":"",
-                                  "make":"Toyota",
-                                  "model":"Camry",
-                                  "year":2024,
-                                  "price":35000.00
-                                }
-                                """))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenVinLengthIsInvalid() throws Exception {
-        mockMvc.perform(post("/api/vehicles")
-                        .header("Authorization", "Bearer valid-jwt")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "vin":"12345",
-                                  "make":"Toyota",
-                                  "model":"Camry",
-                                  "year":2024,
-                                  "price":35000.00
-                                }
-                                """))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldGetVehicleByIdSuccessfully() throws Exception {
         VehicleResponse response = new VehicleResponse(
                 1L,
-                "12345678901234567",
                 "Toyota",
                 "Camry",
                 2024,
@@ -191,8 +132,8 @@ class VehicleControllerTest {
 
     @Test
     void shouldGetAllVehiclesSuccessfully() throws Exception {
-        VehicleResponse response1 = new VehicleResponse(1L, "VIN1", "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE);
-        VehicleResponse response2 = new VehicleResponse(2L, "VIN2", "Honda", "Civic", 2024, new BigDecimal("28000.00"), VehicleStatus.AVAILABLE);
+        VehicleResponse response1 = new VehicleResponse(1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE);
+        VehicleResponse response2 = new VehicleResponse(2L, "Honda", "Civic", 2024, new BigDecimal("28000.00"), VehicleStatus.AVAILABLE);
 
         when(vehicleService.getAllVehicles())
                 .thenReturn(List.of(response1, response2));
@@ -209,7 +150,6 @@ class VehicleControllerTest {
     void shouldUpdateVehicleSuccessfully() throws Exception {
         VehicleResponse response = new VehicleResponse(
                 1L,
-                "12345678901234567",
                 "Toyota Updated",
                 "Camry Updated",
                 2025,
@@ -225,7 +165,6 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "vin":"12345678901234567",
                                   "make":"Toyota Updated",
                                   "model":"Camry Updated",
                                   "year":2025,
@@ -256,7 +195,6 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "vin":"12345678901234567",
                                   "make":"Toyota",
                                   "model":"Camry",
                                   "year":2024,
@@ -274,7 +212,6 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "vin":"12345678901234567",
                                   "make":"Toyota Updated",
                                   "model":"Camry Updated",
                                   "year":2025,

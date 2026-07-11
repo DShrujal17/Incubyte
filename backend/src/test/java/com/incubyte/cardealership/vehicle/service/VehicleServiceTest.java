@@ -33,7 +33,6 @@ class VehicleServiceTest {
     @Test
     void shouldCreateVehicleSuccessfully() {
         VehicleRequest request = new VehicleRequest(
-                "12345678901234567",
                 "Toyota",
                 "Camry",
                 2024,
@@ -41,15 +40,11 @@ class VehicleServiceTest {
                 VehicleStatus.AVAILABLE
         );
 
-        when(vehicleRepository.findByVin(request.vin()))
-                .thenReturn(Optional.empty());
-
         when(vehicleRepository.save(any(Vehicle.class)))
                 .thenAnswer(invocation -> {
                     Vehicle v = invocation.getArgument(0);
                     return Vehicle.builder()
                             .id(1L)
-                            .vin(v.getVin())
                             .make(v.getMake())
                             .model(v.getModel())
                             .year(v.getYear())
@@ -61,7 +56,6 @@ class VehicleServiceTest {
         VehicleResponse response = vehicleService.createVehicle(request);
 
         assertNotNull(response.id());
-        assertEquals("12345678901234567", response.vin());
         assertEquals("Toyota", response.make());
         assertEquals("Camry", response.model());
         assertEquals(2024, response.year());
@@ -72,33 +66,9 @@ class VehicleServiceTest {
     }
 
     @Test
-    void shouldThrowDuplicateVinExceptionWhenVinAlreadyExists() {
-        VehicleRequest request = new VehicleRequest(
-                "12345678901234567",
-                "Toyota",
-                "Camry",
-                2024,
-                new BigDecimal("35000.00"),
-                VehicleStatus.AVAILABLE
-        );
-
-        Vehicle existingVehicle = Vehicle.builder()
-                .id(1L)
-                .vin(request.vin())
-                .build();
-
-        when(vehicleRepository.findByVin(request.vin()))
-                .thenReturn(Optional.of(existingVehicle));
-
-        assertThrows(DuplicateVinException.class, () -> vehicleService.createVehicle(request));
-        verify(vehicleRepository, never()).save(any(Vehicle.class));
-    }
-
-    @Test
     void shouldGetVehicleByIdSuccessfully() {
         Vehicle vehicle = Vehicle.builder()
                 .id(1L)
-                .vin("12345678901234567")
                 .make("Toyota")
                 .model("Camry")
                 .year(2024)
@@ -112,7 +82,6 @@ class VehicleServiceTest {
         VehicleResponse response = vehicleService.getVehicleById(1L);
 
         assertEquals(1L, response.id());
-        assertEquals("12345678901234567", response.vin());
         assertEquals("Toyota", response.make());
     }
 
@@ -126,8 +95,8 @@ class VehicleServiceTest {
 
     @Test
     void shouldGetAllVehiclesSuccessfully() {
-        Vehicle vehicle1 = Vehicle.builder().id(1L).vin("VIN1").make("Toyota").build();
-        Vehicle vehicle2 = Vehicle.builder().id(2L).vin("VIN2").make("Honda").build();
+        Vehicle vehicle1 = Vehicle.builder().id(1L).make("Toyota").build();
+        Vehicle vehicle2 = Vehicle.builder().id(2L).make("Honda").build();
 
         when(vehicleRepository.findAll())
                 .thenReturn(List.of(vehicle1, vehicle2));
@@ -143,7 +112,6 @@ class VehicleServiceTest {
     void shouldUpdateVehicleSuccessfully() {
         Vehicle vehicle = Vehicle.builder()
                 .id(1L)
-                .vin("12345678901234567")
                 .make("Toyota")
                 .model("Camry")
                 .year(2024)
@@ -152,7 +120,6 @@ class VehicleServiceTest {
                 .build();
 
         VehicleRequest updateRequest = new VehicleRequest(
-                "12345678901234567",
                 "Toyota Updated",
                 "Camry Updated",
                 2025,
@@ -177,7 +144,7 @@ class VehicleServiceTest {
 
     @Test
     void shouldDeleteVehicleSuccessfully() {
-        Vehicle vehicle = Vehicle.builder().id(1L).vin("VIN1").build();
+        Vehicle vehicle = Vehicle.builder().id(1L).build();
 
         when(vehicleRepository.findById(1L))
                 .thenReturn(Optional.of(vehicle));
