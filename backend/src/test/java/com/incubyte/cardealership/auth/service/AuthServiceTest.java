@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -193,5 +194,32 @@ class AuthServiceTest {
         assertEquals("Login successful", response.message());
 
         verify(userRepository).findByEmail(request.email());
+    }
+
+    @Test
+    void shouldReturnJwtTokenAfterSuccessfulLogin() {
+
+        User user = User.builder()
+                .name("Shrujal")
+                .email("shrujal@gmail.com")
+                .password("encodedPassword")
+                .role(Role.USER)
+                .build();
+
+        LoginRequest request = new LoginRequest(
+                "shrujal@gmail.com",
+                "password123"
+        );
+
+        when(userRepository.findByEmail(request.email()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(request.password(), user.getPassword()))
+                .thenReturn(true);
+
+        LoginResponse response = authService.login(request);
+
+        assertEquals("Login successful", response.message());
+        assertNotNull(response.token());
     }
 }
