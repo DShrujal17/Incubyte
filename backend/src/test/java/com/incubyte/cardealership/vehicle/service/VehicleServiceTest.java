@@ -3,7 +3,6 @@ package com.incubyte.cardealership.vehicle.service;
 import com.incubyte.cardealership.vehicle.dto.*;
 import com.incubyte.cardealership.vehicle.entity.Vehicle;
 import com.incubyte.cardealership.vehicle.entity.VehicleStatus;
-import com.incubyte.cardealership.vehicle.exception.DuplicateVinException;
 import com.incubyte.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.cardealership.vehicle.repository.VehicleRepository;
 import org.junit.jupiter.api.Test;
