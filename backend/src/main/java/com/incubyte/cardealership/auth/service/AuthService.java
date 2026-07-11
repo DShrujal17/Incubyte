@@ -23,29 +23,20 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request) {
 
-        if (!request.email().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            throw new IllegalArgumentException("Invalid email");
-        }
-
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        String encodedPassword = passwordEncoder.encode(request.password());
-
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
-                .password(encodedPassword)
+                .password(passwordEncoder.encode(request.password()))
                 .role(Role.USER)
                 .build();
 
         userRepository.save(user);
 
-        return new RegisterResponse(
-                request.name(),
-                request.email()
-        );
+        return new RegisterResponse(request.name(), request.email());
     }
 
     public LoginResponse login(LoginRequest request) {

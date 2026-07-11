@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles, purchaseVehicle, restockVehicle } from "../services/vehicleService";
 
+const EMPTY_FORM = { make: "", model: "", year: "", price: "", status: "AVAILABLE", category: "", quantity: "" };
+const EMPTY_FILTERS = { make: "", model: "", category: "", minPrice: "", maxPrice: "" };
+
+const makeChangeHandler = (setter) => (event) =>
+    setter((prev) => ({ ...prev, [event.target.name]: event.target.value }));
+
 export default function Dashboard() {
     const navigate = useNavigate();
     const [vehicles, setVehicles] = useState([]);
@@ -18,23 +24,8 @@ export default function Dashboard() {
     const [restockQty, setRestockQty] = useState(1);
     const [actionMessage, setActionMessage] = useState("");
 
-    const [formData, setFormData] = useState({
-        make: "",
-        model: "",
-        year: "",
-        price: "",
-        status: "AVAILABLE",
-        category: "",
-        quantity: "",
-    });
-
-    const [filters, setFilters] = useState({
-        make: "",
-        model: "",
-        category: "",
-        minPrice: "",
-        maxPrice: "",
-    });
+    const [formData, setFormData] = useState(EMPTY_FORM);
+    const [filters, setFilters] = useState(EMPTY_FILTERS);
 
     const fetchVehicles = async () => {
         try {
@@ -58,19 +49,8 @@ export default function Dashboard() {
         fetchVehicles();
     }, [navigate]);
 
-    const handleInputChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-        });
-    };
-
-    const handleFilterChange = (event) => {
-        setFilters({
-            ...filters,
-            [event.target.name]: event.target.value,
-        });
-    };
+    const handleInputChange = makeChangeHandler(setFormData);
+    const handleFilterChange = makeChangeHandler(setFilters);
 
     const handleSearch = async () => {
         try {
@@ -85,28 +65,13 @@ export default function Dashboard() {
     };
 
     const handleClearFilters = () => {
-        const resetFilters = {
-            make: "",
-            model: "",
-            category: "",
-            minPrice: "",
-            maxPrice: "",
-        };
-        setFilters(resetFilters);
+        setFilters(EMPTY_FILTERS);
         fetchVehicles();
     };
 
     const handleOpenAddModal = () => {
         setModalMode("add");
-        setFormData({
-            make: "",
-            model: "",
-            year: "",
-            price: "",
-            status: "AVAILABLE",
-            category: "",
-            quantity: "",
-        });
+        setFormData(EMPTY_FORM);
         setError("");
         setIsModalOpen(true);
     };
@@ -169,15 +134,18 @@ export default function Dashboard() {
         }
     };
 
+    const showToast = (msg) => {
+        setActionMessage(msg);
+        setTimeout(() => setActionMessage(""), 3000);
+    };
+
     const handlePurchase = async (id) => {
         try {
             await purchaseVehicle(id);
-            setActionMessage("Purchase successful! Vehicle quantity updated.");
             fetchVehicles();
-            setTimeout(() => setActionMessage(""), 3000);
+            showToast("Purchase successful! Vehicle quantity updated.");
         } catch (err) {
-            setActionMessage(err.response?.data?.message || "Purchase failed — vehicle may be out of stock.");
-            setTimeout(() => setActionMessage(""), 3000);
+            showToast(err.response?.data?.message || "Purchase failed — vehicle may be out of stock.");
         }
     };
 
@@ -191,9 +159,8 @@ export default function Dashboard() {
         try {
             await restockVehicle(vehicleToRestockId, restockQty);
             setIsRestockModalOpen(false);
-            setActionMessage(`Restocked successfully with ${restockQty} unit(s).`);
             fetchVehicles();
-            setTimeout(() => setActionMessage(""), 3000);
+            showToast(`Restocked successfully with ${restockQty} unit(s).`);
         } catch (err) {
             console.error("Failed to restock vehicle:", err);
         }

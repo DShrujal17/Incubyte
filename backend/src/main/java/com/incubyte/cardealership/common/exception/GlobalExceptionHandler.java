@@ -15,35 +15,22 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateEmail(
-            EmailAlreadyExistsException ex) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErrorResponse(
-                        ex.getMessage(),
-                        LocalDateTime.now()
-                ));
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(EmailAlreadyExistsException ex) {
+        return errorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(
-            InvalidCredentialsException ex) {
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(
-                        ex.getMessage(),
-                        LocalDateTime.now()
-                ));
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return errorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(VehicleNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleVehicleNotFound(
-            VehicleNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleVehicleNotFound(VehicleNotFoundException ex) {
+        return errorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(
-                        ex.getMessage(),
-                        LocalDateTime.now()
-                ));
+    private ResponseEntity<ErrorResponse> errorResponse(String message, HttpStatus status) {
+        return ResponseEntity.status(status)
+                .body(new ErrorResponse(message, LocalDateTime.now()));
     }
 }
