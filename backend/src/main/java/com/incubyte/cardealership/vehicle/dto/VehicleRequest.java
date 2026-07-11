@@ -20,5 +20,12 @@ public record VehicleRequest(
         @Positive(message = "Price must be positive")
         BigDecimal price,
 
-        VehicleStatus status
+        VehicleStatus status,
+
+        @NotBlank(message = "Category is required")
+        String category,
+
+        @NotNull(message = "Quantity is required")
+        @Min(value = 0, message = "Quantity cannot be negative")
+        Integer quantity
 ) {}

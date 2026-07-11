@@ -26,6 +26,8 @@ public class VehicleService {
                 .year(request.year())
                 .price(request.price())
                 .status(status)
+                .category(request.category())
+                .quantity(request.quantity())
                 .build();
 
         Vehicle saved = vehicleRepository.save(vehicle);
@@ -55,6 +57,8 @@ public class VehicleService {
         if (request.status() != null) {
             vehicle.setStatus(request.status());
         }
+        vehicle.setCategory(request.category());
+        vehicle.setQuantity(request.quantity());
 
         Vehicle updated = vehicleRepository.save(vehicle);
         return mapToResponse(updated);
@@ -73,7 +77,9 @@ public class VehicleService {
                 vehicle.getModel(),
                 vehicle.getYear(),
                 vehicle.getPrice(),
-                vehicle.getStatus()
+                vehicle.getStatus(),
+                vehicle.getCategory(),
+                vehicle.getQuantity()
         );
     }
 }

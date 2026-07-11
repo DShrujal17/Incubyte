@@ -10,5 +10,7 @@ public record VehicleResponse(
         String model,
         Integer year,
         BigDecimal price,
-        VehicleStatus status
+        VehicleStatus status,
+        String category,
+        Integer quantity
 ) {}
