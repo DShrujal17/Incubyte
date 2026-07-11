@@ -1,0 +1,13 @@
+{
+  "name": "car-dealership-inventory",
+  "version": "1.0.0",
+  "description": "Car Dealership Inventory System (Spring Boot + React)",
+  "scripts": {
+    "start": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && .\\mvnw.cmd spring-boot:run",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
