@@ -5,6 +5,7 @@ import com.incubyte.cardealership.auth.dto.LoginResponse;
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
+import com.incubyte.cardealership.auth.exception.InvalidCredentialsException;
 import com.incubyte.cardealership.auth.service.AuthService;
 import com.incubyte.cardealership.auth.service.JwtService;
 import com.incubyte.cardealership.config.SecurityConfig;
@@ -192,7 +193,7 @@ class AuthControllerTest {
     @Test
     void shouldReturnUnauthorizedWhenLoginFails() throws Exception {
         when(authService.login(any(LoginRequest.class)))
-                .thenThrow(new RuntimeException("Invalid email or password"));
+                .thenThrow(new InvalidCredentialsException("Invalid email or password"));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
