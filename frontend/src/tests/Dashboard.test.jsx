@@ -37,6 +37,8 @@ describe("Dashboard Page", () => {
                 year: 2024,
                 price: 35000,
                 status: "AVAILABLE",
+                category: "Sedan",
+                quantity: 5,
             },
         ];
 
@@ -55,6 +57,8 @@ describe("Dashboard Page", () => {
             expect(screen.getByText("Toyota")).toBeInTheDocument();
             expect(screen.getByText("Camry")).toBeInTheDocument();
             expect(screen.getByText("35000")).toBeInTheDocument();
+            expect(screen.getByText("Sedan")).toBeInTheDocument();
+            expect(screen.getByText("5")).toBeInTheDocument();
         });
     });
 
@@ -67,6 +71,8 @@ describe("Dashboard Page", () => {
             year: 2024,
             price: 28000,
             status: "AVAILABLE",
+            category: "Sedan",
+            quantity: 5,
         });
 
         render(
@@ -82,6 +88,8 @@ describe("Dashboard Page", () => {
         await userEvent.type(screen.getByLabelText(/model/i), "Civic");
         await userEvent.type(screen.getByLabelText(/year/i), "2024");
         await userEvent.type(screen.getByLabelText(/price/i), "28000");
+        await userEvent.type(screen.getByLabelText(/category/i), "Sedan");
+        await userEvent.type(screen.getByLabelText(/quantity/i), "5");
 
         const submitButton = screen.getByRole("button", { name: /save/i });
         await userEvent.click(submitButton);
@@ -92,6 +100,8 @@ describe("Dashboard Page", () => {
             year: 2024,
             price: 28000,
             status: "AVAILABLE",
+            category: "Sedan",
+            quantity: 5,
         });
     });
 
@@ -104,6 +114,8 @@ describe("Dashboard Page", () => {
                 year: 2024,
                 price: 35000,
                 status: "AVAILABLE",
+                category: "Sedan",
+                quantity: 5,
             },
         ];
 
@@ -115,6 +127,8 @@ describe("Dashboard Page", () => {
             year: 2025,
             price: 38000,
             status: "SOLD",
+            category: "SUV",
+            quantity: 10,
         });
 
         render(
@@ -149,6 +163,16 @@ describe("Dashboard Page", () => {
         const statusSelect = screen.getByLabelText(/status/i);
         await userEvent.selectOptions(statusSelect, "SOLD");
 
+        const categoryInput = screen.getByLabelText(/category/i);
+        expect(categoryInput).toHaveValue("Sedan");
+        await userEvent.clear(categoryInput);
+        await userEvent.type(categoryInput, "SUV");
+
+        const quantityInput = screen.getByLabelText(/quantity/i);
+        expect(quantityInput).toHaveValue(5);
+        await userEvent.clear(quantityInput);
+        await userEvent.type(quantityInput, "10");
+
         const submitButton = screen.getByRole("button", { name: /save/i });
         await userEvent.click(submitButton);
 
@@ -158,6 +182,8 @@ describe("Dashboard Page", () => {
             year: 2025,
             price: 38000,
             status: "SOLD",
+            category: "SUV",
+            quantity: 10,
         });
     });
 
@@ -170,6 +196,8 @@ describe("Dashboard Page", () => {
                 year: 2024,
                 price: 35000,
                 status: "AVAILABLE",
+                category: "Sedan",
+                quantity: 5,
             },
         ];
 
