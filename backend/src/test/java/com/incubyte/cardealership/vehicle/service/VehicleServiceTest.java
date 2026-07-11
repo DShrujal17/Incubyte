@@ -168,4 +168,28 @@ class VehicleServiceTest {
 
         verify(vehicleRepository).delete(vehicle);
     }
+
+    @Test
+    void shouldSearchVehiclesSuccessfully() {
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Camry")
+                .year(2024)
+                .price(new BigDecimal("35000.00"))
+                .status(VehicleStatus.AVAILABLE)
+                .category("Sedan")
+                .quantity(5)
+                .build();
+
+        when(vehicleRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
+                .thenReturn(List.of(vehicle));
+
+        List<VehicleResponse> responses = vehicleService.searchVehicles(
+                "toyota", "camry", "sedan", new BigDecimal("30000"), new BigDecimal("40000")
+        );
+
+        assertEquals(1, responses.size());
+        assertEquals("Toyota", responses.get(0).make());
+    }
 }

@@ -247,4 +247,21 @@ class VehicleControllerTest {
                         .header("Authorization", "Bearer user-jwt"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void shouldSearchVehiclesSuccessfully() throws Exception {
+        VehicleResponse response = new VehicleResponse(
+                1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE, "Sedan", 5
+        );
+
+        when(vehicleService.searchVehicles("Toyota", null, null, null, null))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/vehicles/search")
+                        .param("make", "Toyota")
+                        .header("Authorization", "Bearer user-jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].make").value("Toyota"));
+    }
 }
