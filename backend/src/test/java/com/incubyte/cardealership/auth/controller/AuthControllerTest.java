@@ -1,5 +1,7 @@
 package com.incubyte.cardealership.auth.controller;
 
+import com.incubyte.cardealership.auth.dto.LoginRequest;
+import com.incubyte.cardealership.auth.dto.LoginResponse;
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
 import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
@@ -164,5 +166,42 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/test-protected")
                         .header("Authorization", "Bearer valid-jwt"))
                 .andExpect(status().isNotFound()); // non-401/403 status (returns 404 because the endpoint does not exist)
+    }
+
+    @Test
+    void shouldLoginSuccessfully() throws Exception {
+        LoginResponse response = new LoginResponse(
+                "Login successful",
+                "dummy-jwt-token"
+        );
+
+        when(authService.login(any(LoginRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email":"shrujal@gmail.com",
+                                  "password":"password123"
+                                }
+                                """))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenLoginFails() throws Exception {
+        when(authService.login(any(LoginRequest.class)))
+                .thenThrow(new RuntimeException("Invalid email or password"));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email":"wrong@gmail.com",
+                                  "password":"wrongpassword"
+                                }
+                                """))
+                .andExpect(status().isUnauthorized());
     }
 }
