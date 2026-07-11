@@ -40,4 +40,32 @@ describe("Login Page", () => {
             password: "password123",
         });
     });
+
+    test("should store JWT in localStorage on successful login", async () => {
+        const spySetItem = vi.spyOn(Storage.prototype, "setItem");
+        authService.login.mockResolvedValue({
+            message: "Login successful",
+            token: "dummy-jwt-token",
+        });
+
+        render(<Login />);
+
+        await userEvent.type(
+            screen.getByLabelText(/email/i),
+            "shrujal@gmail.com"
+        );
+
+        await userEvent.type(
+            screen.getByLabelText(/password/i),
+            "password123"
+        );
+
+        await userEvent.click(
+            screen.getByRole("button", { name: /login/i })
+        );
+
+        expect(spySetItem).toHaveBeenCalledWith("token", "dummy-jwt-token");
+
+        spySetItem.mockRestore();
+    });
 });
