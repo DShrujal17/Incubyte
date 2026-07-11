@@ -7,7 +7,6 @@ import com.incubyte.cardealership.vehicle.exception.OutOfStockException;
 import com.incubyte.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -67,15 +66,15 @@ public class VehicleService {
 
     public List<VehicleResponse> searchVehicles(String make, String model, String category,
                                                 BigDecimal minPrice, BigDecimal maxPrice) {
-        Specification<Vehicle> spec = (root, query, cb) -> cb.conjunction();
-
-        if (make != null && !make.isBlank())     spec = spec.and(likeFilter("make", make));
-        if (model != null && !model.isBlank())   spec = spec.and(likeFilter("model", model));
-        if (category != null && !category.isBlank()) spec = spec.and(likeFilter("category", category));
-        if (minPrice != null) spec = spec.and((root, q, cb) -> cb.ge(root.get("price"), minPrice));
-        if (maxPrice != null) spec = spec.and((root, q, cb) -> cb.le(root.get("price"), maxPrice));
-
-        return vehicleRepository.findAll(spec).stream()
+        return vehicleRepository.findAll().stream()
+                .filter(v -> make == null || make.isBlank()
+                        || v.getMake().toLowerCase().contains(make.toLowerCase()))
+                .filter(v -> model == null || model.isBlank()
+                        || v.getModel().toLowerCase().contains(model.toLowerCase()))
+                .filter(v -> category == null || category.isBlank()
+                        || v.getCategory().toLowerCase().contains(category.toLowerCase()))
+                .filter(v -> minPrice == null || v.getPrice().compareTo(minPrice) >= 0)
+                .filter(v -> maxPrice == null || v.getPrice().compareTo(maxPrice) <= 0)
                 .map(this::mapToResponse)
                 .toList();
     }
@@ -111,11 +110,6 @@ public class VehicleService {
     private Vehicle findOrThrow(Long id) {
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle with id " + id + " not found"));
-    }
-
-    private Specification<Vehicle> likeFilter(String field, String value) {
-        return (root, query, cb) ->
-                cb.like(cb.lower(root.get(field)), "%" + value.toLowerCase() + "%");
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {

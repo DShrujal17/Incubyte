@@ -182,8 +182,8 @@ class VehicleServiceTest {
                 .quantity(5)
                 .build();
 
-        when(vehicleRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
-                .thenReturn(List.of(vehicle));
+        // Search now filters in-memory — mock plain findAll()
+        when(vehicleRepository.findAll()).thenReturn(List.of(vehicle));
 
         List<VehicleResponse> responses = vehicleService.searchVehicles(
                 "toyota", "camry", "sedan", new BigDecimal("30000"), new BigDecimal("40000")
