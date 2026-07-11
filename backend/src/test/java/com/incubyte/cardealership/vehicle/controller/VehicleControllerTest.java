@@ -7,7 +7,6 @@ import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
 import com.incubyte.cardealership.vehicle.dto.*;
 import com.incubyte.cardealership.vehicle.entity.VehicleStatus;
-import com.incubyte.cardealership.vehicle.exception.DuplicateVinException;
 import com.incubyte.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.incubyte.cardealership.vehicle.service.VehicleService;
 import org.junit.jupiter.api.BeforeEach;
