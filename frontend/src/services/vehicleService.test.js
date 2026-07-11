@@ -31,7 +31,7 @@ describe("Vehicle Service", () => {
     });
 
     test("should create vehicle with Authorization header", async () => {
-        const vehicleData = { vin: "1", make: "Toyota" };
+        const vehicleData = { make: "Toyota" };
         axios.post.mockResolvedValue({ data: { id: 1, ...vehicleData } });
 
         const result = await createVehicle(vehicleData);
@@ -49,7 +49,7 @@ describe("Vehicle Service", () => {
     });
 
     test("should update vehicle with Authorization header", async () => {
-        const vehicleData = { vin: "1", make: "Toyota Updated" };
+        const vehicleData = { make: "Toyota Updated" };
         axios.put.mockResolvedValue({ data: { id: 1, ...vehicleData } });
 
         const result = await updateVehicle(1, vehicleData);

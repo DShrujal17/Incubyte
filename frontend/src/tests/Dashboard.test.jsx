@@ -32,7 +32,6 @@ describe("Dashboard Page", () => {
         const mockVehicles = [
             {
                 id: 1,
-                vin: "VIN12345678901234",
                 make: "Toyota",
                 model: "Camry",
                 year: 2024,
@@ -55,7 +54,6 @@ describe("Dashboard Page", () => {
         await waitFor(() => {
             expect(screen.getByText("Toyota")).toBeInTheDocument();
             expect(screen.getByText("Camry")).toBeInTheDocument();
-            expect(screen.getByText("VIN12345678901234")).toBeInTheDocument();
             expect(screen.getByText("35000")).toBeInTheDocument();
         });
     });
@@ -64,7 +62,6 @@ describe("Dashboard Page", () => {
         vehicleService.getAllVehicles.mockResolvedValue([]);
         vehicleService.createVehicle.mockResolvedValue({
             id: 2,
-            vin: "VIN12345678901234",
             make: "Honda",
             model: "Civic",
             year: 2024,
@@ -81,7 +78,6 @@ describe("Dashboard Page", () => {
         const addButton = screen.getByRole("button", { name: /add vehicle/i });
         await userEvent.click(addButton);
 
-        await userEvent.type(screen.getByLabelText(/vin/i), "VIN12345678901234");
         await userEvent.type(screen.getByLabelText(/make/i), "Honda");
         await userEvent.type(screen.getByLabelText(/model/i), "Civic");
         await userEvent.type(screen.getByLabelText(/year/i), "2024");
@@ -91,7 +87,6 @@ describe("Dashboard Page", () => {
         await userEvent.click(submitButton);
 
         expect(vehicleService.createVehicle).toHaveBeenCalledWith({
-            vin: "VIN12345678901234",
             make: "Honda",
             model: "Civic",
             year: 2024,
@@ -104,7 +99,6 @@ describe("Dashboard Page", () => {
         const mockVehicles = [
             {
                 id: 1,
-                vin: "VIN12345678901234",
                 make: "Toyota",
                 model: "Camry",
                 year: 2024,
@@ -116,7 +110,6 @@ describe("Dashboard Page", () => {
         vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
         vehicleService.updateVehicle.mockResolvedValue({
             id: 1,
-            vin: "VIN12345678901234",
             make: "Toyota Updated",
             model: "Camry Updated",
             year: 2025,
@@ -160,7 +153,6 @@ describe("Dashboard Page", () => {
         await userEvent.click(submitButton);
 
         expect(vehicleService.updateVehicle).toHaveBeenCalledWith(1, {
-            vin: "VIN12345678901234",
             make: "Toyota Updated",
             model: "Camry Updated",
             year: 2025,
@@ -173,7 +165,6 @@ describe("Dashboard Page", () => {
         const mockVehicles = [
             {
                 id: 1,
-                vin: "VIN12345678901234",
                 make: "Toyota",
                 model: "Camry",
                 year: 2024,
