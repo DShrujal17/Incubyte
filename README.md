@@ -53,41 +53,38 @@ car-dealership-inventory
 
 # ✨ Features
 
-## Authentication
+## Authentication & Role-Based Access Control (RBAC)
 
-### Registration
-
-- User Registration
+### Registration & Seeding
+- User Registration (stores role `USER` by default)
 - Password Encryption (BCrypt)
-- Request Validation
-- Duplicate Email Validation
-- Save User into PostgreSQL
-- Frontend Registration Form
-- Backend API Integration
+- **Default Admin Account Seeding**: The system automatically seeds the following Admin credentials on startup for testing:
+  - **Email**: `admin@gmail.com`
+  - **Password**: `admin123`
+  - **Name**: `adminUser`
+  - **Role**: `ADMIN`
 
-### Login
-
+### Login & Route Guards
 - User Authentication & JWT Token Generation
 - JWT Signature Validation and Claim Extraction
 - JWT Security Interceptor Filter (`JwtAuthenticationFilter`)
 - Custom Authentication Entry Point (Stateless `401 Unauthorized` responses)
 - Frontend Login Form with Controlled Inputs
-- JWT Token Persistence in `localStorage`
-- Protected Routes & Navigation Redirects (`useNavigate`)
-- Frontend Error Handling & Login Validation Errors Display
+- JWT Token and Role persistence in `localStorage`
+- Protected Routes & Navigation Redirects (`useNavigate` guards if token is missing)
+
+### Role-Based Access Control (RBAC)
+- Allow read operations (`GET`) for all authenticated users.
+- Require `ADMIN` authority for write operations (`POST`, `PUT`, `DELETE`).
+- Frontend dynamically shows/hides Add, Edit, and Delete action buttons depending on whether the user's role is `ADMIN` or `USER`.
 
 ---
 
-## Vehicle Management
-
-- Add Vehicle
-- Update Vehicle
-- Delete Vehicle
-- Search Vehicle
-- Purchase Vehicle
-- Restock Vehicle
-
-*(Coming Soon)*
+## Vehicle Management (CRUD)
+- **Add Vehicle**: Admin can open a form modal to add new vehicles (Make, Model, Year, Price, Status).
+- **Edit Vehicle**: Admin can edit details of existing vehicles with inline input validations (e.g. positive price, valid model years).
+- **Delete Vehicle**: Admin can delete vehicles via a custom, premium delete confirmation modal.
+- **Auto-Refresh**: Table updates automatically in real-time on creation, updating, or deletion.
 
 ---
 
@@ -97,22 +94,19 @@ The project follows **Test-Driven Development (TDD)**.
 
 Backend testing includes:
 - Service Unit Tests
-- Controller Tests
-- Mockito
-- JUnit 5
+- Controller MockMvc Tests
+- Mockito Spies & Captors
+- JUnit 5 assertions
 
 Frontend testing includes:
 - React Testing Library
 - Vitest
+- Axios Mock Adapters
 
-Every behavior is developed using:
+Every behavior is developed using the TDD lifecycle:
 
 ```
-RED
-↓
-GREEN
-↓
-REFACTOR
+RED → GREEN → REFACTOR
 ```
 
 ---
@@ -125,44 +119,26 @@ REFACTOR
 git clone <repository-url>
 ```
 
----
-
 ## 2 Navigate
 
 ```bash
 cd car-dealership-inventory/backend
 ```
 
----
-
 ## 3 Configure PostgreSQL
 
-Create a PostgreSQL database.
+Create a PostgreSQL database (e.g. `incubyte`).
 
-Example:
-
-```
-car_dealership
-```
-
-Update:
-
-```
-src/main/resources/application.properties
-```
-
-Example:
+Update `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/incubyte
 spring.datasource.username=postgres
-spring.datasource.password=your_password
+spring.datasource.password=your_postgres_password
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ```
-
----
 
 ## 4 Run Backend
 
@@ -170,8 +146,7 @@ spring.jpa.show-sql=true
 .\mvnw.cmd spring-boot:run
 ```
 
-Backend runs on
-
+Backend runs on:
 ```
 http://localhost:8080
 ```
@@ -180,28 +155,27 @@ http://localhost:8080
 
 # 💻 Frontend Setup
 
-Navigate
+## 1 Navigate
 
 ```bash
-cd frontend
+cd car-dealership-inventory/frontend
 ```
 
-Install dependencies
+## 2 Install Dependencies
 
 ```bash
 npm install
 ```
 
-Run
+## 3 Run Frontend Dev Server
 
 ```bash
 npm run dev
 ```
 
-Frontend runs on
-
+Frontend runs on:
 ```
-http://localhost:5173
+http://localhost:5174  # (or http://localhost:5173 depending on port availability)
 ```
 
 ---
@@ -211,13 +185,10 @@ http://localhost:5173
 ## Authentication
 
 ### Register
-
 ```
 POST /api/auth/register
 ```
-
-Example Request
-
+* **Request**:
 ```json
 {
     "name":"Shrujal",
@@ -225,9 +196,7 @@ Example Request
     "password":"password123"
 }
 ```
-
-Example Response
-
+* **Response**:
 ```json
 {
     "name":"Shrujal",
@@ -236,71 +205,99 @@ Example Response
 ```
 
 ### Login
-
 ```
 POST /api/auth/login
 ```
-
-Example Request
-
+* **Request**:
 ```json
 {
-    "email":"shrujal@gmail.com",
-    "password":"password123"
+    "email":"admin@gmail.com",
+    "password":"admin123"
+}
+```
+* **Response**:
+```json
+{
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "role":"ADMIN"
 }
 ```
 
-Example Response
+---
 
+## Vehicles (Protected)
+
+### Get All Vehicles
+```
+GET /api/vehicles
+```
+*Requires authentication header.*
+
+### Create Vehicle
+```
+POST /api/vehicles
+```
+*Requires ADMIN role.*
+* **Request**:
 ```json
 {
-    "message":"Login successful",
-    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2024,
+  "price": 35000.00,
+  "status": "AVAILABLE"
 }
 ```
+
+### Update Vehicle
+```
+PUT /api/vehicles/{id}
+```
+*Requires ADMIN role.*
+
+### Delete Vehicle
+```
+DELETE /api/vehicles/{id}
+```
+*Requires ADMIN role.*
 
 ---
 
 # 📈 Current Progress
 
 ## Backend
-
 - [x] Registration
 - [x] Login (JWT)
-- [ ] Vehicle CRUD
+- [x] Seed Default Admin (`admin@gmail.com` / `admin123`)
+- [x] Vehicle CRUD
 - [ ] Purchase Vehicle
 - [ ] Restock Vehicle
 
----
-
 ## Frontend
-
-- [x] Registration
-- [x] Login
-- [ ] Dashboard
-- [ ] Vehicle Management
+- [x] Registration & Login
+- [x] Dashboard Routing Guards
+- [x] Vehicle CRUD List
+- [x] Interactive Add/Edit Form Modals
+- [x] Custom Delete Confirmation Modal
+- [x] Role-based UI visibility checks
 
 ---
 
 # 📋 Future Improvements
-
-- Vehicle Inventory Dashboard
-- Search & Filtering
-- Responsive UI
-- Docker Support
-- Deployment
+- Vehicle Search & Dynamic Filtering (Make, Model, Category, Price)
+- Quantity tracking (Purchase and Restock mechanics)
+- Responsive UI Optimization
+- Docker Containerization
 
 ---
 
 # 🤖 My AI Usage
 
 AI tools used:
-
 - ChatGPT
 - Antigravity (Google DeepMind)
 
 How AI was used:
-
 - Discussed project architecture.
 - Generated initial boilerplate.
 - Assisted with strict TDD workflow (RED → GREEN → REFACTOR).
@@ -308,15 +305,12 @@ How AI was used:
 - Assisted with Vitest, jsdom setup, React Router navigation mocks, and localStorage spy implementations.
 
 Reflection:
-
 AI significantly improved development speed by assisting with framework-specific configurations, test setups, and debugging. All code was developed feature-by-feature using disciplined TDD to ensure full validation coverage.
 
 ---
 
 # 👨‍💻 Author
 
-**Shrujal Doshi**
-
-B.Tech Computer Engineering
-
-Dharmsinh Desai University
+**Shrujal Doshi**  
+B.Tech Computer Engineering  
+Dharmsinh Desai University  
