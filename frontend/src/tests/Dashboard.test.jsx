@@ -19,6 +19,7 @@ vi.mock("../services/vehicleService");
 describe("Dashboard Page", () => {
     beforeEach(() => {
         vi.restoreAllMocks();
+        vi.clearAllMocks();
         mockNavigate.mockClear();
         vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
             if (key === "token") return "valid-token";

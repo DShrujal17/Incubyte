@@ -48,6 +48,7 @@ class VehicleControllerTest {
 
     @BeforeEach
     void setUp() {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
         when(jwtService.extractEmail("valid-jwt")).thenReturn("shrujal@gmail.com");
         when(jwtService.isTokenValid("valid-jwt", "shrujal@gmail.com")).thenReturn(true);
 
