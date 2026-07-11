@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
+import { MemoryRouter } from "react-router-dom";
 import Register from "../pages/Register";
 import * as authService from "../services/authService";
 
@@ -13,7 +14,11 @@ describe("Register Page", () => {
 
         authService.register.mockResolvedValue({});
 
-        render(<Register />);
+        render(
+            <MemoryRouter>
+                <Register />
+            </MemoryRouter>
+        );
 
         await userEvent.type(
             screen.getByLabelText(/name/i),

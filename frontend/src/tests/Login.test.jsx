@@ -1,20 +1,31 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 import Login from "../pages/Login";
 import * as authService from "../services/authService";
 
 const mockNavigate = vi.fn();
-vi.mock("react-router-dom", () => ({
-    useNavigate: () => mockNavigate,
-}));
+vi.mock("react-router-dom", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useNavigate: () => mockNavigate,
+    };
+});
 
 vi.mock("../services/authService");
 
+const renderLogin = () => render(
+    <MemoryRouter>
+        <Login />
+    </MemoryRouter>
+);
+
 describe("Login Page", () => {
     test("should render login form with email, password fields and login button", () => {
-        render(<Login />);
+        renderLogin();
 
         expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
@@ -24,7 +35,7 @@ describe("Login Page", () => {
     test("should call login service when form is submitted", async () => {
         authService.login.mockResolvedValue({});
 
-        render(<Login />);
+        renderLogin();
 
         await userEvent.type(
             screen.getByLabelText(/email/i),
@@ -53,7 +64,7 @@ describe("Login Page", () => {
             token: "dummy-jwt-token",
         });
 
-        render(<Login />);
+        renderLogin();
 
         await userEvent.type(
             screen.getByLabelText(/email/i),
@@ -80,7 +91,7 @@ describe("Login Page", () => {
             token: "dummy-jwt-token",
         });
 
-        render(<Login />);
+        renderLogin();
 
         await userEvent.type(
             screen.getByLabelText(/email/i),
@@ -102,7 +113,7 @@ describe("Login Page", () => {
     test("should display error message on login failure", async () => {
         authService.login.mockRejectedValue(new Error("Invalid email or password"));
 
-        render(<Login />);
+        renderLogin();
 
         await userEvent.type(
             screen.getByLabelText(/email/i),

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { login } from "../services/authService";
 
 export default function Login() {
@@ -32,32 +32,43 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
-                </div>
-                <button type="submit">Login</button>
-            </form>
+        <div className="auth-container">
+            <div className="auth-card">
+                <h1>Login</h1>
+                <p className="auth-subtitle">Sign in to access your car dealership account</p>
+                
+                {error && <div className="auth-error">{error}</div>}
+                
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="auth-button">Login</button>
+                </form>
+
+                <p className="auth-switch">
+                    Don't have an account? <Link to="/register">Register here</Link>
+                </p>
+            </div>
         </div>
     );
 }
