@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from "vitest";
 import axios from "axios";
-import { register } from "./authService";
+import { register, login } from "./authService";
 
 vi.mock("axios");
 
@@ -27,6 +27,34 @@ describe("Auth Service", () => {
             "http://localhost:8080/api/auth/register",
             user
         );
+
+    });
+
+    test("should call backend login API", async () => {
+
+        axios.post.mockResolvedValue({
+            data: {
+                message: "Login successful",
+                token: "dummy-jwt-token",
+            },
+        });
+
+        const credentials = {
+            email: "shrujal@gmail.com",
+            password: "password123",
+        };
+
+        const result = await login(credentials);
+
+        expect(axios.post).toHaveBeenCalledWith(
+            "http://localhost:8080/api/auth/login",
+            credentials
+        );
+
+        expect(result).toEqual({
+            message: "Login successful",
+            token: "dummy-jwt-token",
+        });
 
     });
 
