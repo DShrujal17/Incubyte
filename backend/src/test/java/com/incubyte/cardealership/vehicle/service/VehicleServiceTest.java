@@ -36,7 +36,9 @@ class VehicleServiceTest {
                 "Camry",
                 2024,
                 new BigDecimal("35000.00"),
-                VehicleStatus.AVAILABLE
+                VehicleStatus.AVAILABLE,
+                "Sedan",
+                5
         );
 
         when(vehicleRepository.save(any(Vehicle.class)))
@@ -49,6 +51,8 @@ class VehicleServiceTest {
                             .year(v.getYear())
                             .price(v.getPrice())
                             .status(v.getStatus())
+                            .category(v.getCategory())
+                            .quantity(v.getQuantity())
                             .build();
                 });
 
@@ -60,6 +64,8 @@ class VehicleServiceTest {
         assertEquals(2024, response.year());
         assertEquals(new BigDecimal("35000.00"), response.price());
         assertEquals(VehicleStatus.AVAILABLE, response.status());
+        assertEquals("Sedan", response.category());
+        assertEquals(5, response.quantity());
 
         verify(vehicleRepository).save(any(Vehicle.class));
     }
@@ -73,6 +79,8 @@ class VehicleServiceTest {
                 .year(2024)
                 .price(new BigDecimal("35000.00"))
                 .status(VehicleStatus.AVAILABLE)
+                .category("Sedan")
+                .quantity(5)
                 .build();
 
         when(vehicleRepository.findById(1L))
@@ -82,6 +90,8 @@ class VehicleServiceTest {
 
         assertEquals(1L, response.id());
         assertEquals("Toyota", response.make());
+        assertEquals("Sedan", response.category());
+        assertEquals(5, response.quantity());
     }
 
     @Test
@@ -94,8 +104,8 @@ class VehicleServiceTest {
 
     @Test
     void shouldGetAllVehiclesSuccessfully() {
-        Vehicle vehicle1 = Vehicle.builder().id(1L).make("Toyota").build();
-        Vehicle vehicle2 = Vehicle.builder().id(2L).make("Honda").build();
+        Vehicle vehicle1 = Vehicle.builder().id(1L).make("Toyota").category("Sedan").quantity(5).build();
+        Vehicle vehicle2 = Vehicle.builder().id(2L).make("Honda").category("SUV").quantity(2).build();
 
         when(vehicleRepository.findAll())
                 .thenReturn(List.of(vehicle1, vehicle2));
@@ -116,6 +126,8 @@ class VehicleServiceTest {
                 .year(2024)
                 .price(new BigDecimal("35000.00"))
                 .status(VehicleStatus.AVAILABLE)
+                .category("Sedan")
+                .quantity(5)
                 .build();
 
         VehicleRequest updateRequest = new VehicleRequest(
@@ -123,7 +135,9 @@ class VehicleServiceTest {
                 "Camry Updated",
                 2025,
                 new BigDecimal("38000.00"),
-                VehicleStatus.SOLD
+                VehicleStatus.SOLD,
+                "Sedan",
+                10
         );
 
         when(vehicleRepository.findById(1L))
@@ -139,6 +153,8 @@ class VehicleServiceTest {
         assertEquals(2025, response.year());
         assertEquals(new BigDecimal("38000.00"), response.price());
         assertEquals(VehicleStatus.SOLD, response.status());
+        assertEquals("Sedan", response.category());
+        assertEquals(10, response.quantity());
     }
 
     @Test

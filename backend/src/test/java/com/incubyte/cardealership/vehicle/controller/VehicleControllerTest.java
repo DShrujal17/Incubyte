@@ -75,7 +75,9 @@ class VehicleControllerTest {
                 "Camry",
                 2024,
                 new BigDecimal("35000.00"),
-                VehicleStatus.AVAILABLE
+                VehicleStatus.AVAILABLE,
+                "Sedan",
+                5
         );
 
         when(vehicleService.createVehicle(any(VehicleRequest.class)))
@@ -90,12 +92,16 @@ class VehicleControllerTest {
                                   "model":"Camry",
                                   "year":2024,
                                   "price":35000.00,
-                                  "status":"AVAILABLE"
+                                  "status":"AVAILABLE",
+                                  "category":"Sedan",
+                                  "quantity":5
                                 }
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.make").value("Toyota"));
+                .andExpect(jsonPath("$.make").value("Toyota"))
+                .andExpect(jsonPath("$.category").value("Sedan"))
+                .andExpect(jsonPath("$.quantity").value(5));
     }
 
     @Test
@@ -106,7 +112,9 @@ class VehicleControllerTest {
                 "Camry",
                 2024,
                 new BigDecimal("35000.00"),
-                VehicleStatus.AVAILABLE
+                VehicleStatus.AVAILABLE,
+                "Sedan",
+                5
         );
 
         when(vehicleService.getVehicleById(1L))
@@ -116,7 +124,9 @@ class VehicleControllerTest {
                         .header("Authorization", "Bearer valid-jwt"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.make").value("Toyota"));
+                .andExpect(jsonPath("$.make").value("Toyota"))
+                .andExpect(jsonPath("$.category").value("Sedan"))
+                .andExpect(jsonPath("$.quantity").value(5));
     }
 
     @Test
@@ -131,8 +141,8 @@ class VehicleControllerTest {
 
     @Test
     void shouldGetAllVehiclesSuccessfully() throws Exception {
-        VehicleResponse response1 = new VehicleResponse(1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE);
-        VehicleResponse response2 = new VehicleResponse(2L, "Honda", "Civic", 2024, new BigDecimal("28000.00"), VehicleStatus.AVAILABLE);
+        VehicleResponse response1 = new VehicleResponse(1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE, "Sedan", 5);
+        VehicleResponse response2 = new VehicleResponse(2L, "Honda", "Civic", 2024, new BigDecimal("28000.00"), VehicleStatus.AVAILABLE, "Sedan", 3);
 
         when(vehicleService.getAllVehicles())
                 .thenReturn(List.of(response1, response2));
@@ -153,7 +163,9 @@ class VehicleControllerTest {
                 "Camry Updated",
                 2025,
                 new BigDecimal("38000.00"),
-                VehicleStatus.SOLD
+                VehicleStatus.SOLD,
+                "Sedan",
+                10
         );
 
         when(vehicleService.updateVehicle(eq(1L), any(VehicleRequest.class)))
@@ -168,12 +180,16 @@ class VehicleControllerTest {
                                   "model":"Camry Updated",
                                   "year":2025,
                                   "price":38000.00,
-                                  "status":"SOLD"
+                                  "status":"SOLD",
+                                  "category":"Sedan",
+                                  "quantity":10
                                 }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.make").value("Toyota Updated"))
-                .andExpect(jsonPath("$.status").value("SOLD"));
+                .andExpect(jsonPath("$.status").value("SOLD"))
+                .andExpect(jsonPath("$.category").value("Sedan"))
+                .andExpect(jsonPath("$.quantity").value(10));
     }
 
     @Test
@@ -198,7 +214,9 @@ class VehicleControllerTest {
                                   "model":"Camry",
                                   "year":2024,
                                   "price":35000.00,
-                                  "status":"AVAILABLE"
+                                  "status":"AVAILABLE",
+                                  "category":"Sedan",
+                                  "quantity":5
                                 }
                                 """))
                 .andExpect(status().isForbidden());
@@ -215,7 +233,9 @@ class VehicleControllerTest {
                                   "model":"Camry Updated",
                                   "year":2025,
                                   "price":38000.00,
-                                  "status":"SOLD"
+                                  "status":"SOLD",
+                                  "category":"Sedan",
+                                  "quantity":10
                                 }
                                 """))
                 .andExpect(status().isForbidden());
