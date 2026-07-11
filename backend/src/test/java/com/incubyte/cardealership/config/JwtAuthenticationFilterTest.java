@@ -93,7 +93,13 @@ class JwtAuthenticationFilterTest {
         request.addHeader("Authorization", "Bearer invalid-token");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
+        User user = User.builder()
+                .email("shrujal@gmail.com")
+                .role(Role.USER)
+                .build();
+
         when(jwtService.extractEmail("invalid-token")).thenReturn("shrujal@gmail.com");
+        when(userRepository.findByEmail("shrujal@gmail.com")).thenReturn(Optional.of(user));
         when(jwtService.isTokenValid("invalid-token", "shrujal@gmail.com")).thenReturn(false);
 
         jwtAuthenticationFilter.doFilter(request, response, filterChain);

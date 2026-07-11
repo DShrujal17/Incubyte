@@ -4,6 +4,7 @@ import com.incubyte.cardealership.auth.dto.LoginRequest;
 import com.incubyte.cardealership.auth.dto.LoginResponse;
 import com.incubyte.cardealership.auth.dto.RegisterRequest;
 import com.incubyte.cardealership.auth.dto.RegisterResponse;
+import com.incubyte.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.incubyte.cardealership.user.entity.Role;
 import com.incubyte.cardealership.user.entity.User;
 import com.incubyte.cardealership.user.repository.UserRepository;
@@ -91,7 +92,7 @@ class AuthServiceTest {
                 .thenReturn(Optional.of(existingUser));
 
         assertThrows(
-                IllegalArgumentException.class,
+                EmailAlreadyExistsException.class,
                 () -> authService.register(request)
         );
     }
