@@ -166,13 +166,46 @@ export default function Dashboard() {
         }
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        navigate("/login");
+    };
+
     return (
         <div className="dashboard-container">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <h1 style={{ margin: 0 }}>Dashboard</h1>
-                {userRole === "ADMIN" && (
-                    <button className="auth-button" style={{ width: "auto", padding: "10px 20px" }} onClick={handleOpenAddModal}>Add Vehicle</button>
-                )}
+                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                    <span style={{
+                        padding: "4px 12px",
+                        borderRadius: "20px",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        background: userRole === "ADMIN" ? "rgba(99,102,241,0.15)" : "rgba(16,185,129,0.15)",
+                        color: userRole === "ADMIN" ? "#818cf8" : "#34d399",
+                        border: userRole === "ADMIN" ? "1px solid rgba(99,102,241,0.3)" : "1px solid rgba(16,185,129,0.3)"
+                    }}>{userRole}</span>
+                    {userRole === "ADMIN" && (
+                        <button className="auth-button" style={{ width: "auto", padding: "10px 20px" }} onClick={handleOpenAddModal}>Add Vehicle</button>
+                    )}
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            padding: "10px 20px",
+                            borderRadius: "8px",
+                            border: "1px solid rgba(239,68,68,0.4)",
+                            background: "rgba(239,68,68,0.1)",
+                            color: "#f87171",
+                            cursor: "pointer",
+                            fontWeight: "600",
+                            fontSize: "14px",
+                            transition: "all 0.2s"
+                        }}
+                        onMouseEnter={e => { e.target.style.background = "rgba(239,68,68,0.2)"; e.target.style.borderColor = "rgba(239,68,68,0.6)"; }}
+                        onMouseLeave={e => { e.target.style.background = "rgba(239,68,68,0.1)"; e.target.style.borderColor = "rgba(239,68,68,0.4)"; }}
+                    >Logout</button>
+                </div>
             </div>
 
             {/* Search Filters Bar */}
