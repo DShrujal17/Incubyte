@@ -2,5 +2,6 @@ package com.incubyte.cardealership.auth.dto;
 
 public record LoginResponse(
         String message,
-        String token
+        String token,
+        String role
 ) {}
