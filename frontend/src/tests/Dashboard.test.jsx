@@ -246,12 +246,13 @@ describe("Dashboard Page", () => {
         const mockVehicles = [
             {
                 id: 1,
-                vin: "VIN12345678901234",
                 make: "Toyota",
                 model: "Camry",
                 year: 2024,
                 price: 35000,
                 status: "AVAILABLE",
+                category: "Sedan",
+                quantity: 5,
             },
         ];
         vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
@@ -268,5 +269,41 @@ describe("Dashboard Page", () => {
         expect(screen.queryByText("Actions")).not.toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /edit/i })).not.toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
+    });
+
+    test("should search and filter vehicles by make when search button is clicked", async () => {
+        const mockVehicles = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Camry",
+                year: 2024,
+                price: 35000,
+                status: "AVAILABLE",
+                category: "Sedan",
+                quantity: 5,
+            },
+        ];
+
+        vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
+        vehicleService.searchVehicles.mockResolvedValue([mockVehicles[0]]);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota");
+
+        const searchMakeInput = screen.getByPlaceholderText(/search make.../i);
+        await userEvent.type(searchMakeInput, "Toyota");
+
+        const searchButton = screen.getByRole("button", { name: /search/i });
+        await userEvent.click(searchButton);
+
+        expect(vehicleService.searchVehicles).toHaveBeenCalledWith(expect.objectContaining({
+            make: "Toyota",
+        }));
     });
 });
