@@ -1,6 +1,6 @@
 import { vi, describe, test, expect, beforeEach, afterEach } from "vitest";
 import axios from "axios";
-import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle } from "./vehicleService";
+import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } from "./vehicleService";
 
 vi.mock("axios");
 
@@ -64,6 +64,24 @@ describe("Vehicle Service", () => {
             }
         );
         expect(result).toEqual({ id: 1, ...vehicleData });
+    });
+
+    test("should search vehicles with parameters and Authorization header", async () => {
+        const filters = { make: "Toyota", minPrice: 20000 };
+        axios.get.mockResolvedValue({ data: [{ id: 1, make: "Toyota" }] });
+
+        const result = await searchVehicles(filters);
+
+        expect(axios.get).toHaveBeenCalledWith(
+            "http://localhost:8080/api/vehicles/search",
+            {
+                headers: {
+                    Authorization: "Bearer dummy-jwt-token",
+                },
+                params: expect.any(URLSearchParams),
+            }
+        );
+        expect(result).toEqual([{ id: 1, make: "Toyota" }]);
     });
 
     test("should delete vehicle with Authorization header", async () => {
