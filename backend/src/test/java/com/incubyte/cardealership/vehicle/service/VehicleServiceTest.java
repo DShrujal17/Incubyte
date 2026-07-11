@@ -192,4 +192,69 @@ class VehicleServiceTest {
         assertEquals(1, responses.size());
         assertEquals("Toyota", responses.get(0).make());
     }
+
+    @Test
+    void shouldPurchaseVehicleSuccessfully() {
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .quantity(5)
+                .status(VehicleStatus.AVAILABLE)
+                .build();
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
+        when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response = vehicleService.purchaseVehicle(1L);
+
+        assertEquals(4, response.quantity());
+        assertEquals(VehicleStatus.AVAILABLE, response.status());
+    }
+
+    @Test
+    void shouldMarkVehicleAsSoldWhenQuantityReachesZeroOnPurchase() {
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .quantity(1)
+                .status(VehicleStatus.AVAILABLE)
+                .build();
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
+        when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response = vehicleService.purchaseVehicle(1L);
+
+        assertEquals(0, response.quantity());
+        assertEquals(VehicleStatus.SOLD, response.status());
+    }
+
+    @Test
+    void shouldThrowOutOfStockExceptionWhenQuantityIsZero() {
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .quantity(0)
+                .status(VehicleStatus.SOLD)
+                .build();
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
+
+        assertThrows(com.incubyte.cardealership.vehicle.exception.OutOfStockException.class, 
+                () -> vehicleService.purchaseVehicle(1L));
+    }
+
+    @Test
+    void shouldRestockVehicleSuccessfully() {
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .quantity(0)
+                .status(VehicleStatus.SOLD)
+                .build();
+
+        when(vehicleRepository.findById(1L)).thenReturn(Optional.of(vehicle));
+        when(vehicleRepository.save(any(Vehicle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response = vehicleService.restockVehicle(1L, 10);
+
+        assertEquals(10, response.quantity());
+        assertEquals(VehicleStatus.AVAILABLE, response.status());
+    }
 }

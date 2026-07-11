@@ -264,4 +264,51 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].make").value("Toyota"));
     }
+
+    @Test
+    void shouldPurchaseVehicleSuccessfully() throws Exception {
+        VehicleResponse response = new VehicleResponse(
+                1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE, "Sedan", 4
+        );
+
+        when(vehicleService.purchaseVehicle(1L)).thenReturn(response);
+
+        mockMvc.perform(post("/api/vehicles/1/purchase")
+                        .header("Authorization", "Bearer user-jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.quantity").value(4));
+    }
+
+    @Test
+    void shouldRestockVehicleSuccessfully() throws Exception {
+        VehicleResponse response = new VehicleResponse(
+                1L, "Toyota", "Camry", 2024, new BigDecimal("35000.00"), VehicleStatus.AVAILABLE, "Sedan", 15
+        );
+
+        when(vehicleService.restockVehicle(eq(1L), any(Integer.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/vehicles/1/restock")
+                        .header("Authorization", "Bearer valid-jwt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "quantity": 10
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.quantity").value(15));
+    }
+
+    @Test
+    void shouldReturnForbiddenWhenNonAdminTriesToRestock() throws Exception {
+        mockMvc.perform(post("/api/vehicles/1/restock")
+                        .header("Authorization", "Bearer user-jwt")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "quantity": 10
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
 }
