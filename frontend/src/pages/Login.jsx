@@ -16,7 +16,10 @@ export default function Login() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await login(formData);
+        const responseData = await login(formData);
+        if (responseData && responseData.token) {
+            localStorage.setItem("token", responseData.token);
+        }
     };
 
     return (
