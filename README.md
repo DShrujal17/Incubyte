@@ -157,25 +157,40 @@ RED → GREEN → REFACTOR
 
 ---
 
-# 🚀 Quick Start (Single Command)
+# 🚀 Quick Start (Docker - Recommended)
 
-You can launch both the Spring Boot backend and React dev frontend concurrently using a single command from the repository root:
+The easiest way to run the entire application (PostgreSQL Database, Spring Boot Backend, and React Frontend) is using Docker Compose.
 
-## 1. Clone & Setup Databases
+## 1. Clone the repository
 ```bash
 git clone https://github.com/DShrujal17/Incubyte.git
 cd car-dealership-inventory
 ```
-Configure your local PostgreSQL settings in `backend/src/main/resources/application.properties` first.
 
-## 2. Install Root dependencies & Start
+## 2. Run with Docker Compose
+Ensure Docker Desktop is running on your machine, then execute:
+```bash
+docker-compose up -d --build
+```
+
+That's it! The services will be available at:
+* **Frontend**: `http://localhost:1308`
+* **Backend API**: `http://localhost:8080`
+* **Database**: `localhost:5432`
+
+---
+
+# 🛠️ Manual Setup (Without Docker)
+
+If you prefer to run the services natively instead of using Docker, follow the instructions below.
+
+## Root Level Startup
+You can launch both the Spring Boot backend and React dev frontend concurrently using a single command:
 ```bash
 npm install
 npm run start
 ```
-This runs:
-* **Backend**: `http://localhost:8080`
-* **Frontend**: `http://localhost:5174`
+*(Requires local PostgreSQL to be configured in `application.properties` first).*
 
 ---
 
