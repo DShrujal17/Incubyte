@@ -4,6 +4,7 @@ import com.incubyte.cardealership.vehicle.dto.*;
 import com.incubyte.cardealership.vehicle.entity.Vehicle;
 import com.incubyte.cardealership.vehicle.entity.VehicleStatus;
 import com.incubyte.cardealership.vehicle.exception.VehicleNotFoundException;
+import com.incubyte.cardealership.vehicle.exception.OutOfStockException;
 import com.incubyte.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -93,6 +94,36 @@ public class VehicleService {
         return vehicleRepository.findAll(spec).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public VehicleResponse purchaseVehicle(Long id) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new VehicleNotFoundException("Vehicle with id " + id + " not found"));
+
+        if (vehicle.getQuantity() <= 0) {
+            throw new OutOfStockException("Vehicle with id " + id + " is out of stock");
+        }
+
+        vehicle.setQuantity(vehicle.getQuantity() - 1);
+        if (vehicle.getQuantity() == 0) {
+            vehicle.setStatus(VehicleStatus.SOLD);
+        }
+
+        Vehicle saved = vehicleRepository.save(vehicle);
+        return mapToResponse(saved);
+    }
+
+    public VehicleResponse restockVehicle(Long id, Integer quantity) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new VehicleNotFoundException("Vehicle with id " + id + " not found"));
+
+        vehicle.setQuantity(vehicle.getQuantity() + quantity);
+        if (vehicle.getQuantity() > 0 && vehicle.getStatus() == VehicleStatus.SOLD) {
+            vehicle.setStatus(VehicleStatus.AVAILABLE);
+        }
+
+        Vehicle saved = vehicleRepository.save(vehicle);
+        return mapToResponse(saved);
     }
 
     private VehicleResponse mapToResponse(Vehicle vehicle) {
