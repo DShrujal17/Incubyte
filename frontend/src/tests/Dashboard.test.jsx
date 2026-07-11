@@ -83,4 +83,105 @@ describe("Dashboard Page", () => {
             status: "AVAILABLE",
         });
     });
+
+    test("should open modal prefilled on edit click, and save updates successfully", async () => {
+        const mockVehicles = [
+            {
+                id: 1,
+                vin: "VIN12345678901234",
+                make: "Toyota",
+                model: "Camry",
+                year: 2024,
+                price: 35000,
+                status: "AVAILABLE",
+            },
+        ];
+
+        vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
+        vehicleService.updateVehicle.mockResolvedValue({
+            id: 1,
+            vin: "VIN12345678901234",
+            make: "Toyota Updated",
+            model: "Camry Updated",
+            year: 2025,
+            price: 38000,
+            status: "SOLD",
+        });
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota");
+
+        const editButton = screen.getByRole("button", { name: /edit/i });
+        await userEvent.click(editButton);
+
+        const makeInput = screen.getByLabelText(/make/i);
+        expect(makeInput).toHaveValue("Toyota");
+
+        await userEvent.clear(makeInput);
+        await userEvent.type(makeInput, "Toyota Updated");
+
+        const modelInput = screen.getByLabelText(/model/i);
+        await userEvent.clear(modelInput);
+        await userEvent.type(modelInput, "Camry Updated");
+
+        const yearInput = screen.getByLabelText(/year/i);
+        await userEvent.clear(yearInput);
+        await userEvent.type(yearInput, "2025");
+
+        const priceInput = screen.getByLabelText(/price/i);
+        await userEvent.clear(priceInput);
+        await userEvent.type(priceInput, "38000");
+
+        const statusSelect = screen.getByLabelText(/status/i);
+        await userEvent.selectOptions(statusSelect, "SOLD");
+
+        const submitButton = screen.getByRole("button", { name: /save/i });
+        await userEvent.click(submitButton);
+
+        expect(vehicleService.updateVehicle).toHaveBeenCalledWith(1, {
+            vin: "VIN12345678901234",
+            make: "Toyota Updated",
+            model: "Camry Updated",
+            year: 2025,
+            price: 38000,
+            status: "SOLD",
+        });
+    });
+
+    test("should delete vehicle successfully on delete click and confirm", async () => {
+        const mockVehicles = [
+            {
+                id: 1,
+                vin: "VIN12345678901234",
+                make: "Toyota",
+                model: "Camry",
+                year: 2024,
+                price: 35000,
+                status: "AVAILABLE",
+            },
+        ];
+
+        vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
+        vehicleService.deleteVehicle.mockResolvedValue({});
+        vi.spyOn(window, "confirm").mockReturnValue(true);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota");
+
+        const deleteButton = screen.getByRole("button", { name: /delete/i });
+        await userEvent.click(deleteButton);
+
+        expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to delete this vehicle?");
+        expect(vehicleService.deleteVehicle).toHaveBeenCalledWith(1);
+    });
 });
