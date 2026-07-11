@@ -62,6 +62,7 @@ describe("Login Page", () => {
         authService.login.mockResolvedValue({
             message: "Login successful",
             token: "dummy-jwt-token",
+            role: "USER",
         });
 
         renderLogin();
@@ -81,6 +82,7 @@ describe("Login Page", () => {
         );
 
         expect(spySetItem).toHaveBeenCalledWith("token", "dummy-jwt-token");
+        expect(spySetItem).toHaveBeenCalledWith("role", "USER");
 
         spySetItem.mockRestore();
     });

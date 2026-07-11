@@ -5,11 +5,26 @@ import { MemoryRouter } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import * as vehicleService from "../services/vehicleService";
 
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        useNavigate: () => mockNavigate,
+    };
+});
+
 vi.mock("../services/vehicleService");
 
 describe("Dashboard Page", () => {
     beforeEach(() => {
         vi.restoreAllMocks();
+        mockNavigate.mockClear();
+        vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+            if (key === "token") return "valid-token";
+            if (key === "role") return "ADMIN";
+            return null;
+        });
     });
 
     test("should fetch and render vehicles list on load", async () => {
@@ -183,5 +198,52 @@ describe("Dashboard Page", () => {
 
         expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to delete this vehicle?");
         expect(vehicleService.deleteVehicle).toHaveBeenCalledWith(1);
+    });
+
+    test("should redirect to login if token is missing", async () => {
+        vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        expect(mockNavigate).toHaveBeenCalledWith("/login");
+        expect(vehicleService.getAllVehicles).not.toHaveBeenCalled();
+    });
+
+    test("should hide Add, Edit and Delete controls if user role is USER", async () => {
+        vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+            if (key === "token") return "valid-token";
+            if (key === "role") return "USER";
+            return null;
+        });
+
+        const mockVehicles = [
+            {
+                id: 1,
+                vin: "VIN12345678901234",
+                make: "Toyota",
+                model: "Camry",
+                year: 2024,
+                price: 35000,
+                status: "AVAILABLE",
+            },
+        ];
+        vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
+
+        render(
+            <MemoryRouter>
+                <Dashboard />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota");
+
+        expect(screen.queryByRole("button", { name: /add vehicle/i })).not.toBeInTheDocument();
+        expect(screen.queryByText("Actions")).not.toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /edit/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /delete/i })).not.toBeInTheDocument();
     });
 });
