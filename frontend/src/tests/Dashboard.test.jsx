@@ -84,12 +84,12 @@ describe("Dashboard Page", () => {
         const addButton = screen.getByRole("button", { name: /add vehicle/i });
         await userEvent.click(addButton);
 
-        await userEvent.type(screen.getByLabelText(/make/i), "Honda");
-        await userEvent.type(screen.getByLabelText(/model/i), "Civic");
-        await userEvent.type(screen.getByLabelText(/year/i), "2024");
-        await userEvent.type(screen.getByLabelText(/price/i), "28000");
-        await userEvent.type(screen.getByLabelText(/category/i), "Sedan");
-        await userEvent.type(screen.getByLabelText(/quantity/i), "5");
+        await userEvent.type(screen.getByLabelText(/^make$/i), "Honda");
+        await userEvent.type(screen.getByLabelText(/^model$/i), "Civic");
+        await userEvent.type(screen.getByLabelText(/^year$/i), "2024");
+        await userEvent.type(screen.getByLabelText(/^price$/i), "28000");
+        await userEvent.type(screen.getByLabelText(/^category$/i), "Sedan");
+        await userEvent.type(screen.getByLabelText(/^quantity$/i), "5");
 
         const submitButton = screen.getByRole("button", { name: /save/i });
         await userEvent.click(submitButton);
@@ -142,33 +142,33 @@ describe("Dashboard Page", () => {
         const editButton = screen.getByRole("button", { name: /edit/i });
         await userEvent.click(editButton);
 
-        const makeInput = screen.getByLabelText(/make/i);
+        const makeInput = screen.getByLabelText(/^make$/i);
         expect(makeInput).toHaveValue("Toyota");
 
         await userEvent.clear(makeInput);
         await userEvent.type(makeInput, "Toyota Updated");
 
-        const modelInput = screen.getByLabelText(/model/i);
+        const modelInput = screen.getByLabelText(/^model$/i);
         await userEvent.clear(modelInput);
         await userEvent.type(modelInput, "Camry Updated");
 
-        const yearInput = screen.getByLabelText(/year/i);
+        const yearInput = screen.getByLabelText(/^year$/i);
         await userEvent.clear(yearInput);
         await userEvent.type(yearInput, "2025");
 
-        const priceInput = screen.getByLabelText(/price/i);
+        const priceInput = screen.getByLabelText(/^price$/i);
         await userEvent.clear(priceInput);
         await userEvent.type(priceInput, "38000");
 
-        const statusSelect = screen.getByLabelText(/status/i);
+        const statusSelect = screen.getByLabelText(/^status$/i);
         await userEvent.selectOptions(statusSelect, "SOLD");
 
-        const categoryInput = screen.getByLabelText(/category/i);
+        const categoryInput = screen.getByLabelText(/^category$/i);
         expect(categoryInput).toHaveValue("Sedan");
         await userEvent.clear(categoryInput);
         await userEvent.type(categoryInput, "SUV");
 
-        const quantityInput = screen.getByLabelText(/quantity/i);
+        const quantityInput = screen.getByLabelText(/^quantity$/i);
         expect(quantityInput).toHaveValue(5);
         await userEvent.clear(quantityInput);
         await userEvent.type(quantityInput, "10");

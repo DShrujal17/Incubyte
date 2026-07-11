@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle } from "../services/vehicleService";
+import { getAllVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } from "../services/vehicleService";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -22,6 +22,14 @@ export default function Dashboard() {
         status: "AVAILABLE",
         category: "",
         quantity: "",
+    });
+
+    const [filters, setFilters] = useState({
+        make: "",
+        model: "",
+        category: "",
+        minPrice: "",
+        maxPrice: "",
     });
 
     const fetchVehicles = async () => {
@@ -51,6 +59,37 @@ export default function Dashboard() {
             ...formData,
             [event.target.name]: event.target.value,
         });
+    };
+
+    const handleFilterChange = (event) => {
+        setFilters({
+            ...filters,
+            [event.target.name]: event.target.value,
+        });
+    };
+
+    const handleSearch = async () => {
+        try {
+            setLoading(true);
+            const data = await searchVehicles(filters);
+            setVehicles(data || []);
+        } catch (err) {
+            console.error("Search failed:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleClearFilters = () => {
+        const resetFilters = {
+            make: "",
+            model: "",
+            category: "",
+            minPrice: "",
+            maxPrice: "",
+        };
+        setFilters(resetFilters);
+        fetchVehicles();
     };
 
     const handleOpenAddModal = () => {
@@ -133,6 +172,84 @@ export default function Dashboard() {
                 {userRole === "ADMIN" && (
                     <button className="auth-button" style={{ width: "auto", padding: "10px 20px" }} onClick={handleOpenAddModal}>Add Vehicle</button>
                 )}
+            </div>
+
+            {/* Search Filters Bar */}
+            <div style={{
+                background: "var(--code-bg)",
+                border: "1px solid var(--border)",
+                borderRadius: "8px",
+                padding: "16px",
+                marginBottom: "24px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: "12px",
+                alignItems: "end"
+            }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Make</label>
+                    <input
+                        id="search-make"
+                        name="make"
+                        type="text"
+                        value={filters.make}
+                        onChange={handleFilterChange}
+                        placeholder="Search Make..."
+                        style={{ padding: "8px 12px" }}
+                    />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="search-model" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Model</label>
+                    <input
+                        id="search-model"
+                        name="model"
+                        type="text"
+                        value={filters.model}
+                        onChange={handleFilterChange}
+                        placeholder="Search Model..."
+                        style={{ padding: "8px 12px" }}
+                    />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="search-category" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Category</label>
+                    <input
+                        id="search-category"
+                        name="category"
+                        type="text"
+                        value={filters.category}
+                        onChange={handleFilterChange}
+                        placeholder="Search Category..."
+                        style={{ padding: "8px 12px" }}
+                    />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="search-minPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Min Price</label>
+                    <input
+                        id="search-minPrice"
+                        name="minPrice"
+                        type="number"
+                        value={filters.minPrice}
+                        onChange={handleFilterChange}
+                        placeholder="Min Price..."
+                        style={{ padding: "8px 12px" }}
+                    />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label htmlFor="search-maxPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Max Price</label>
+                    <input
+                        id="search-maxPrice"
+                        name="maxPrice"
+                        type="number"
+                        value={filters.maxPrice}
+                        onChange={handleFilterChange}
+                        placeholder="Max Price..."
+                        style={{ padding: "8px 12px" }}
+                    />
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                    <button className="auth-button" style={{ width: "100%", padding: "10px" }} onClick={handleSearch}>Search</button>
+                    <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px" }} onClick={handleClearFilters}>Reset</button>
+                </div>
             </div>
 
             {loading ? (
