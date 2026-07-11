@@ -169,7 +169,7 @@ describe("Dashboard Page", () => {
         });
     });
 
-    test("should delete vehicle successfully on delete click and confirm", async () => {
+    test("should open custom confirm modal on delete click, and delete successfully", async () => {
         const mockVehicles = [
             {
                 id: 1,
@@ -184,7 +184,6 @@ describe("Dashboard Page", () => {
 
         vehicleService.getAllVehicles.mockResolvedValue(mockVehicles);
         vehicleService.deleteVehicle.mockResolvedValue({});
-        vi.spyOn(window, "confirm").mockReturnValue(true);
 
         render(
             <MemoryRouter>
@@ -194,10 +193,14 @@ describe("Dashboard Page", () => {
 
         await screen.findByText("Toyota");
 
-        const deleteButton = screen.getByRole("button", { name: /delete/i });
-        await userEvent.click(deleteButton);
+        const deleteBtn = screen.getByRole("button", { name: /delete/i });
+        await userEvent.click(deleteBtn);
 
-        expect(window.confirm).toHaveBeenCalledWith("Are you sure you want to delete this vehicle?");
+        expect(screen.getByText("Are you sure you want to delete this vehicle?")).toBeInTheDocument();
+
+        const confirmBtn = screen.getByRole("button", { name: /yes, delete/i });
+        await userEvent.click(confirmBtn);
+
         expect(vehicleService.deleteVehicle).toHaveBeenCalledWith(1);
     });
 
