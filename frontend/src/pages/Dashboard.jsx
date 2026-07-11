@@ -15,7 +15,6 @@ export default function Dashboard() {
     const [vehicleToDeleteId, setVehicleToDeleteId] = useState(null);
 
     const [formData, setFormData] = useState({
-        vin: "",
         make: "",
         model: "",
         year: "",
@@ -55,7 +54,6 @@ export default function Dashboard() {
     const handleOpenAddModal = () => {
         setModalMode("add");
         setFormData({
-            vin: "",
             make: "",
             model: "",
             year: "",
@@ -70,7 +68,6 @@ export default function Dashboard() {
         setModalMode("edit");
         setEditingVehicleId(vehicle.id);
         setFormData({
-            vin: vehicle.vin,
             make: vehicle.make,
             model: vehicle.model,
             year: vehicle.year.toString(),
@@ -86,7 +83,6 @@ export default function Dashboard() {
         setError("");
 
         const payload = {
-            vin: formData.vin,
             make: formData.make,
             model: formData.model,
             year: parseInt(formData.year, 10),
@@ -139,7 +135,6 @@ export default function Dashboard() {
                 <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden" }}>
                     <thead>
                         <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                            <th style={{ padding: "12px 16px" }}>VIN</th>
                             <th style={{ padding: "12px 16px" }}>Make</th>
                             <th style={{ padding: "12px 16px" }}>Model</th>
                             <th style={{ padding: "12px 16px" }}>Year</th>
@@ -151,7 +146,6 @@ export default function Dashboard() {
                     <tbody>
                         {vehicles.map((v) => (
                             <tr key={v.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                <td style={{ padding: "12px 16px" }}>{v.vin}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.make}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.model}</td>
                                 <td style={{ padding: "12px 16px" }}>{v.year}</td>
@@ -178,19 +172,6 @@ export default function Dashboard() {
                         </div>
                         {error && <div className="auth-error">{error}</div>}
                         <form onSubmit={handleFormSubmit} className="auth-form">
-                            <div className="form-group">
-                                <label htmlFor="vin">VIN</label>
-                                <input
-                                    id="vin"
-                                    name="vin"
-                                    type="text"
-                                    value={formData.vin}
-                                    onChange={handleInputChange}
-                                    maxLength={17}
-                                    required
-                                    disabled={modalMode === "edit"}
-                                />
-                            </div>
                             <div className="form-group">
                                 <label htmlFor="make">Make</label>
                                 <input
