@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
     return (
@@ -8,7 +9,7 @@ function App() {
             <Routes>
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<div className="dashboard-container"><h1>Dashboard</h1><p>Welcome to the Car Dealership Inventory System!</p></div>} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
         </Router>
