@@ -18,6 +18,7 @@ This project is being developed feature-by-feature using the **Red → Green →
 - Maven
 - JUnit 5
 - Mockito
+- JWT (jjwt)
 
 ## Frontend
 
@@ -66,7 +67,14 @@ car-dealership-inventory
 
 ### Login
 
-- Coming Soon
+- User Authentication & JWT Token Generation
+- JWT Signature Validation and Claim Extraction
+- JWT Security Interceptor Filter (`JwtAuthenticationFilter`)
+- Custom Authentication Entry Point (Stateless `401 Unauthorized` responses)
+- Frontend Login Form with Controlled Inputs
+- JWT Token Persistence in `localStorage`
+- Protected Routes & Navigation Redirects (`useNavigate`)
+- Frontend Error Handling & Login Validation Errors Display
 
 ---
 
@@ -88,26 +96,22 @@ car-dealership-inventory
 The project follows **Test-Driven Development (TDD)**.
 
 Backend testing includes:
-
 - Service Unit Tests
 - Controller Tests
 - Mockito
 - JUnit 5
 
 Frontend testing includes:
-
 - React Testing Library
 - Vitest
 
-Every feature is developed using:
+Every behavior is developed using:
 
 ```
 RED
 ↓
-
 GREEN
 ↓
-
 REFACTOR
 ```
 
@@ -163,7 +167,7 @@ spring.jpa.show-sql=true
 ## 4 Run Backend
 
 ```bash
-mvn spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
 Backend runs on
@@ -231,6 +235,30 @@ Example Response
 }
 ```
 
+### Login
+
+```
+POST /api/auth/login
+```
+
+Example Request
+
+```json
+{
+    "email":"shrujal@gmail.com",
+    "password":"password123"
+}
+```
+
+Example Response
+
+```json
+{
+    "message":"Login successful",
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
 ---
 
 # 📈 Current Progress
@@ -238,7 +266,7 @@ Example Response
 ## Backend
 
 - [x] Registration
-- [ ] Login (JWT)
+- [x] Login (JWT)
 - [ ] Vehicle CRUD
 - [ ] Purchase Vehicle
 - [ ] Restock Vehicle
@@ -248,7 +276,7 @@ Example Response
 ## Frontend
 
 - [x] Registration
-- [ ] Login
+- [x] Login
 - [ ] Dashboard
 - [ ] Vehicle Management
 
@@ -256,8 +284,6 @@ Example Response
 
 # 📋 Future Improvements
 
-- JWT Authentication
-- Role-Based Authorization
 - Vehicle Inventory Dashboard
 - Search & Filtering
 - Responsive UI
@@ -271,20 +297,19 @@ Example Response
 AI tools used:
 
 - ChatGPT
+- Antigravity (Google DeepMind)
 
 How AI was used:
 
 - Discussed project architecture.
 - Generated initial boilerplate.
-- Assisted with TDD workflow.
-- Helped debug Spring Security and CORS issues.
-- Reviewed unit tests.
-- Assisted with React frontend structure.
-- Suggested improvements while ensuring understanding of the implementation.
+- Assisted with strict TDD workflow (RED → GREEN → REFACTOR).
+- Helped debug Spring Security configuration, MockMvc filter tests, and CORS configurations.
+- Assisted with Vitest, jsdom setup, React Router navigation mocks, and localStorage spy implementations.
 
 Reflection:
 
-AI significantly improved development speed by assisting with repetitive boilerplate, debugging, and explaining framework-specific issues. All generated code was reviewed, modified, tested, and integrated manually to ensure correctness and understanding.
+AI significantly improved development speed by assisting with framework-specific configurations, test setups, and debugging. All code was developed feature-by-feature using disciplined TDD to ensure full validation coverage.
 
 ---
 
