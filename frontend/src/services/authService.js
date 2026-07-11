@@ -11,5 +11,9 @@ export const register = async (userData) => {
 };
 
 export const login = async (credentials) => {
-    // placeholder
+    const response = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        credentials
+    );
+    return response.data;
 };
