@@ -47,16 +47,17 @@ class DataInitializerTest {
     }
 
     @Test
-    void shouldNotCreateAdminUserIfAlreadyExistsButEnsureAdminRole() {
+    void shouldUpdateAdminUserIfAlreadyExistsToEnsureCorrectCredentials() {
         User existingUser = User.builder()
                 .id(1L)
-                .name("adminUser")
+                .name("oldName")
                 .email("admin@gmail.com")
-                .password("hashed-admin123")
+                .password("old-hashed-password")
                 .role(Role.USER)
                 .build();
 
         when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.encode("admin123")).thenReturn("hashed-admin123");
 
         dataInitializer.run();
 
@@ -64,6 +65,8 @@ class DataInitializerTest {
         verify(userRepository).save(userCaptor.capture());
 
         User savedUser = userCaptor.getValue();
+        assertEquals("adminUser", savedUser.getName());
+        assertEquals("hashed-admin123", savedUser.getPassword());
         assertEquals(Role.ADMIN, savedUser.getRole());
     }
 }
