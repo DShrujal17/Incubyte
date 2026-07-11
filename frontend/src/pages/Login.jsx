@@ -4,6 +4,7 @@ import { login } from "../services/authService";
 
 export default function Login() {
     const navigate = useNavigate();
+    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -18,16 +19,22 @@ export default function Login() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const responseData = await login(formData);
-        if (responseData && responseData.token) {
-            localStorage.setItem("token", responseData.token);
-            navigate("/dashboard");
+        setError("");
+        try {
+            const responseData = await login(formData);
+            if (responseData && responseData.token) {
+                localStorage.setItem("token", responseData.token);
+                navigate("/dashboard");
+            }
+        } catch (err) {
+            setError(err.message || "Invalid email or password");
         }
     };
 
     return (
         <div>
             <h1>Login</h1>
+            {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="email">Email</label>
