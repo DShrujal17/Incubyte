@@ -6,6 +6,9 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 
+# Fix execute permissions for mvnw (needed when cloned on Windows)
+RUN chmod +x mvnw
+
 # Copy the pom.xml file
 COPY pom.xml .
 
