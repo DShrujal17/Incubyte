@@ -196,9 +196,9 @@ export default function Dashboard() {
 
     return (
         <div className="dashboard-container">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="dashboard-header">
                 <h1 style={{ margin: 0 }}>Dashboard</h1>
-                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                <div className="dashboard-header-actions">
                     <span style={{
                         padding: "4px 12px",
                         borderRadius: "20px",
@@ -231,7 +231,7 @@ export default function Dashboard() {
             </div>
 
             {/* Tab Switcher */}
-            <div style={{ display: "flex", gap: "8px", marginBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "0" }}>
+            <div className="tab-switcher">
                 {["inventory", "purchases"].map((tab) => {
                     const label = tab === "inventory" ? "🚗 Inventory" : (userRole === "ADMIN" ? "📊 Sales History" : "🛒 My Purchases");
                     const isActive = activeTab === tab;
@@ -239,17 +239,11 @@ export default function Dashboard() {
                         <button
                             key={tab}
                             onClick={() => handleTabChange(tab)}
+                            className="tab-btn"
                             style={{
-                                padding: "10px 20px",
-                                border: "none",
                                 borderBottom: isActive ? "2px solid #818cf8" : "2px solid transparent",
-                                background: "transparent",
                                 color: isActive ? "#818cf8" : "var(--text-secondary)",
-                                cursor: "pointer",
-                                fontWeight: isActive ? "700" : "500",
-                                fontSize: "14px",
-                                transition: "all 0.2s",
-                                marginBottom: "-1px"
+                                fontWeight: isActive ? "700" : "500"
                             }}
                         >{label}</button>
                     );
@@ -259,17 +253,7 @@ export default function Dashboard() {
             {activeTab === "inventory" ? (
                 <>
                     {/* Search Filters Bar */}
-                    <div style={{
-                        background: "var(--code-bg)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "8px",
-                        padding: "16px",
-                        marginBottom: "24px",
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-                        gap: "12px",
-                        alignItems: "end"
-                    }}>
+                    <div className="filter-grid">
                         <div className="form-group" style={{ marginBottom: 0 }}>
                             <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Make</label>
                             <input
@@ -330,7 +314,7 @@ export default function Dashboard() {
                                 style={{ padding: "8px 12px" }}
                             />
                         </div>
-                        <div style={{ display: "flex", gap: "8px" }}>
+                        <div className="filter-buttons">
                             <button className="auth-button" style={{ width: "100%", padding: "10px" }} onClick={handleSearch}>Search</button>
                             <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px" }} onClick={handleClearFilters}>Reset</button>
                         </div>
@@ -341,7 +325,8 @@ export default function Dashboard() {
                     ) : vehicles.length === 0 ? (
                         <p>No vehicles in inventory.</p>
                     ) : (
-                        <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden" }}>
+                        <div className="table-container">
+                            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
                             <thead>
                                 <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
                                     <th style={{ padding: "12px 16px" }}>Make</th>
@@ -392,6 +377,7 @@ export default function Dashboard() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     )}
                 </>
             ) : (
@@ -401,30 +387,32 @@ export default function Dashboard() {
                     ) : sales.length === 0 ? (
                         <p>{userRole === "ADMIN" ? "No sales records found." : "You have not purchased any vehicles yet."}</p>
                     ) : (
-                        <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", overflow: "hidden" }}>
-                            <thead>
-                                <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                    {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Buyer</th>}
-                                    <th style={{ padding: "12px 16px" }}>Make</th>
-                                    <th style={{ padding: "12px 16px" }}>Model</th>
-                                    <th style={{ padding: "12px 16px" }}>Year</th>
-                                    <th style={{ padding: "12px 16px" }}>Price Paid</th>
-                                    <th style={{ padding: "12px 16px" }}>Purchase Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sales.map((sale) => (
-                                    <tr key={sale.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                        {userRole === "ADMIN" && <td style={{ padding: "12px 16px" }}>{sale.buyerEmail}</td>}
-                                        <td style={{ padding: "12px 16px" }}>{sale.vehicleMake}</td>
-                                        <td style={{ padding: "12px 16px" }}>{sale.vehicleModel}</td>
-                                        <td style={{ padding: "12px 16px" }}>{sale.vehicleYear}</td>
-                                        <td style={{ padding: "12px 16px" }}>{sale.purchasePrice}</td>
-                                        <td style={{ padding: "12px 16px" }}>{new Date(sale.purchasedAt).toLocaleString()}</td>
+                        <div className="table-container">
+                            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
+                                <thead>
+                                    <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                        {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Buyer</th>}
+                                        <th style={{ padding: "12px 16px" }}>Make</th>
+                                        <th style={{ padding: "12px 16px" }}>Model</th>
+                                        <th style={{ padding: "12px 16px" }}>Year</th>
+                                        <th style={{ padding: "12px 16px" }}>Price Paid</th>
+                                        <th style={{ padding: "12px 16px" }}>Purchase Date</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {sales.map((sale) => (
+                                        <tr key={sale.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                            {userRole === "ADMIN" && <td style={{ padding: "12px 16px" }}>{sale.buyerEmail}</td>}
+                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleMake}</td>
+                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleModel}</td>
+                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleYear}</td>
+                                            <td style={{ padding: "12px 16px" }}>{sale.purchasePrice}</td>
+                                            <td style={{ padding: "12px 16px" }}>{new Date(sale.purchasedAt).toLocaleString()}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </>
             )}
