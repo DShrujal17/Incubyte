@@ -2,6 +2,11 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Accept build-time argument for the backend API URL
+# Render passes this via "Build Environment Variables" in the dashboard
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files and install dependencies
 COPY package*.json ./
 RUN npm ci
@@ -9,7 +14,7 @@ RUN npm ci
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the application (VITE_API_URL is baked in here)
 RUN npm run build
 
 # Stage 2: Serve the application with Nginx
