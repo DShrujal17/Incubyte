@@ -467,76 +467,82 @@ export default function Dashboard() {
                             <button className="modal-close" onClick={() => setIsModalOpen(false)}>&times;</button>
                         </div>
                         {error && <div className="auth-error">{error}</div>}
-                        <form onSubmit={handleFormSubmit} className="auth-form">
-                            <div className="form-group">
-                                <label htmlFor="make">Make</label>
-                                <input
-                                    id="make"
-                                    name="make"
-                                    type="text"
-                                    value={formData.make}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                        <form onSubmit={handleFormSubmit} className="auth-form" style={{ gap: "14px" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                <div className="form-group">
+                                    <label htmlFor="make">Make</label>
+                                    <input
+                                        id="make"
+                                        name="make"
+                                        type="text"
+                                        value={formData.make}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="model">Model</label>
+                                    <input
+                                        id="model"
+                                        name="model"
+                                        type="text"
+                                        value={formData.model}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="model">Model</label>
-                                <input
-                                    id="model"
-                                    name="model"
-                                    type="text"
-                                    value={formData.model}
-                                    onChange={handleInputChange}
-                                    required
-                                />
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                <div className="form-group">
+                                    <label htmlFor="year">Year</label>
+                                    <input
+                                        id="year"
+                                        name="year"
+                                        type="number"
+                                        value={formData.year}
+                                        onChange={handleInputChange}
+                                        min={1886}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="price">Price</label>
+                                    <input
+                                        id="price"
+                                        name="price"
+                                        type="number"
+                                        step="0.01"
+                                        value={formData.price}
+                                        onChange={handleInputChange}
+                                        min={0.01}
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="year">Year</label>
-                                <input
-                                    id="year"
-                                    name="year"
-                                    type="number"
-                                    value={formData.year}
-                                    onChange={handleInputChange}
-                                    min={1886}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="price">Price</label>
-                                <input
-                                    id="price"
-                                    name="price"
-                                    type="number"
-                                    step="0.01"
-                                    value={formData.price}
-                                    onChange={handleInputChange}
-                                    min={0.01}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="category">Category</label>
-                                <input
-                                    id="category"
-                                    name="category"
-                                    type="text"
-                                    value={formData.category}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="quantity">Quantity</label>
-                                <input
-                                    id="quantity"
-                                    name="quantity"
-                                    type="number"
-                                    value={formData.quantity}
-                                    onChange={handleInputChange}
-                                    min={0}
-                                    required
-                                />
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                <div className="form-group">
+                                    <label htmlFor="category">Category</label>
+                                    <input
+                                        id="category"
+                                        name="category"
+                                        type="text"
+                                        value={formData.category}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="quantity">Quantity</label>
+                                    <input
+                                        id="quantity"
+                                        name="quantity"
+                                        type="number"
+                                        value={formData.quantity}
+                                        onChange={handleInputChange}
+                                        min={0}
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="status">Status</label>
@@ -545,13 +551,13 @@ export default function Dashboard() {
                                     name="status"
                                     value={formData.status}
                                     onChange={handleInputChange}
-                                    style={{ font: "inherit", padding: "12px 16px", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text-h)" }}
+                                    style={{ font: "inherit", padding: "10px 14px", borderRadius: "8px", border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text-h)" }}
                                 >
                                     <option value="AVAILABLE">AVAILABLE</option>
                                     <option value="SOLD">SOLD</option>
                                 </select>
                             </div>
-                            <div className="modal-actions">
+                            <div className="modal-actions" style={{ marginTop: "8px" }}>
                                 <button type="button" className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsModalOpen(false)}>Cancel</button>
                                 <button type="submit" className="auth-button" style={{ width: "auto", padding: "10px 20px" }}>Save</button>
                             </div>
