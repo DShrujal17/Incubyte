@@ -30,6 +30,7 @@ export default function Dashboard() {
 
     const [formData, setFormData] = useState(EMPTY_FORM);
     const [filters, setFilters] = useState(EMPTY_FILTERS);
+    const [activeFilterType, setActiveFilterType] = useState("make"); // "make" | "model" | "category" | "price" | "all"
 
     const fetchVehicles = async () => {
         try {
@@ -88,6 +89,7 @@ export default function Dashboard() {
 
     const handleClearFilters = () => {
         setFilters(EMPTY_FILTERS);
+        setActiveFilterType("make");
         fetchVehicles();
     };
 
@@ -252,71 +254,113 @@ export default function Dashboard() {
 
             {activeTab === "inventory" ? (
                 <>
-                    {/* Search Filters Bar */}
-                    <div className="filter-grid">
-                        <div className="form-group" style={{ marginBottom: 0 }}>
-                            <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Make</label>
-                            <input
-                                id="search-make"
-                                name="make"
-                                type="text"
-                                value={filters.make}
-                                onChange={handleFilterChange}
-                                placeholder="Search Make..."
-                                style={{ padding: "8px 12px" }}
-                            />
+                    {/* Sleek Filter-Wise Search Bar */}
+                    <div className="filter-bar-container">
+                        <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap", marginBottom: "14px" }}>
+                            <label style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-h)" }}>Filter By:</label>
+                            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                {[
+                                    { key: "make", label: "🚗 Make" },
+                                    { key: "model", label: "🏎️ Model" },
+                                    { key: "category", label: "📂 Category" },
+                                    { key: "price", label: "💰 Price Range" },
+                                    { key: "all", label: "⚙️ Advanced (All)" }
+                                ].map(type => (
+                                    <button
+                                        key={type.key}
+                                        type="button"
+                                        onClick={() => setActiveFilterType(type.key)}
+                                        style={{
+                                            padding: "6px 14px",
+                                            borderRadius: "20px",
+                                            border: activeFilterType === type.key ? "1px solid var(--accent)" : "1px solid var(--border)",
+                                            background: activeFilterType === type.key ? "var(--accent-bg)" : "var(--code-bg)",
+                                            color: activeFilterType === type.key ? "var(--accent)" : "var(--text)",
+                                            fontSize: "13px",
+                                            fontWeight: activeFilterType === type.key ? "600" : "400",
+                                            cursor: "pointer",
+                                            transition: "all 0.2s"
+                                        }}
+                                    >{type.label}</button>
+                                ))}
+                            </div>
                         </div>
-                        <div className="form-group" style={{ marginBottom: 0 }}>
-                            <label htmlFor="search-model" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Model</label>
-                            <input
-                                id="search-model"
-                                name="model"
-                                type="text"
-                                value={filters.model}
-                                onChange={handleFilterChange}
-                                placeholder="Search Model..."
-                                style={{ padding: "8px 12px" }}
-                            />
-                        </div>
-                        <div className="form-group" style={{ marginBottom: 0 }}>
-                            <label htmlFor="search-category" style={{ fontSize: "12px", marginBottom: "4px" }}>Filter Category</label>
-                            <input
-                                id="search-category"
-                                name="category"
-                                type="text"
-                                value={filters.category}
-                                onChange={handleFilterChange}
-                                placeholder="Search Category..."
-                                style={{ padding: "8px 12px" }}
-                            />
-                        </div>
-                        <div className="form-group" style={{ marginBottom: 0 }}>
-                            <label htmlFor="search-minPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Min Price</label>
-                            <input
-                                id="search-minPrice"
-                                name="minPrice"
-                                type="number"
-                                value={filters.minPrice}
-                                onChange={handleFilterChange}
-                                placeholder="Min Price..."
-                                style={{ padding: "8px 12px" }}
-                            />
-                        </div>
-                        <div className="form-group" style={{ marginBottom: 0 }}>
-                            <label htmlFor="search-maxPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Max Price</label>
-                            <input
-                                id="search-maxPrice"
-                                name="maxPrice"
-                                type="number"
-                                value={filters.maxPrice}
-                                onChange={handleFilterChange}
-                                placeholder="Max Price..."
-                                style={{ padding: "8px 12px" }}
-                            />
-                        </div>
-                        <div className="filter-buttons">
-                            <button className="auth-button" style={{ width: "100%", padding: "10px" }} onClick={handleSearch}>Search</button>
-                            <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px" }} onClick={handleClearFilters}>Reset</button>
+
+                        <div className="filter-inputs-row">
+                            {(activeFilterType === "make" || activeFilterType === "all") && (
+                                <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
+                                    <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Make</label>
+                                    <input
+                                        id="search-make"
+                                        name="make"
+                                        type="text"
+                                        value={filters.make}
+                                        onChange={handleFilterChange}
+                                        placeholder="Search Make (e.g. Susuzi, Toyota)..."
+                                        style={{ padding: "8px 12px" }}
+                                    />
+                                </div>
+                            )}
+                            {(activeFilterType === "model" || activeFilterType === "all") && (
+                                <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
+                                    <label htmlFor="search-model" style={{ fontSize: "12px", marginBottom: "4px" }}>Model</label>
+                                    <input
+                                        id="search-model"
+                                        name="model"
+                                        type="text"
+                                        value={filters.model}
+                                        onChange={handleFilterChange}
+                                        placeholder="Search Model (e.g. Victoris)..."
+                                        style={{ padding: "8px 12px" }}
+                                    />
+                                </div>
+                            )}
+                            {(activeFilterType === "category" || activeFilterType === "all") && (
+                                <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
+                                    <label htmlFor="search-category" style={{ fontSize: "12px", marginBottom: "4px" }}>Category</label>
+                                    <input
+                                        id="search-category"
+                                        name="category"
+                                        type="text"
+                                        value={filters.category}
+                                        onChange={handleFilterChange}
+                                        placeholder="Search Category (e.g. Sedan, SUV)..."
+                                        style={{ padding: "8px 12px" }}
+                                    />
+                                </div>
+                            )}
+                            {(activeFilterType === "price" || activeFilterType === "all") && (
+                                <>
+                                    <div className="form-group" style={{ flex: 1, minWidth: "120px", marginBottom: 0 }}>
+                                        <label htmlFor="search-minPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Min Price</label>
+                                        <input
+                                            id="search-minPrice"
+                                            name="minPrice"
+                                            type="number"
+                                            value={filters.minPrice}
+                                            onChange={handleFilterChange}
+                                            placeholder="Min Price..."
+                                            style={{ padding: "8px 12px" }}
+                                        />
+                                    </div>
+                                    <div className="form-group" style={{ flex: 1, minWidth: "120px", marginBottom: 0 }}>
+                                        <label htmlFor="search-maxPrice" style={{ fontSize: "12px", marginBottom: "4px" }}>Max Price</label>
+                                        <input
+                                            id="search-maxPrice"
+                                            name="maxPrice"
+                                            type="number"
+                                            value={filters.maxPrice}
+                                            onChange={handleFilterChange}
+                                            placeholder="Max Price..."
+                                            style={{ padding: "8px 12px" }}
+                                        />
+                                    </div>
+                                </>
+                            )}
+                            <div className="filter-actions-mobile" style={{ display: "flex", gap: "8px" }}>
+                                <button className="auth-button" style={{ padding: "10px 20px" }} onClick={handleSearch}>Search</button>
+                                <button className="auth-button btn-secondary" style={{ padding: "10px 16px" }} onClick={handleClearFilters}>Reset</button>
+                            </div>
                         </div>
                     </div>
 
@@ -325,59 +369,103 @@ export default function Dashboard() {
                     ) : vehicles.length === 0 ? (
                         <p>No vehicles in inventory.</p>
                     ) : (
-                        <div className="table-container">
-                            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
-                            <thead>
-                                <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                    <th style={{ padding: "12px 16px" }}>Make</th>
-                                    <th style={{ padding: "12px 16px" }}>Model</th>
-                                    <th style={{ padding: "12px 16px" }}>Year</th>
-                                    <th style={{ padding: "12px 16px" }}>Price</th>
-                                    <th style={{ padding: "12px 16px" }}>Category</th>
-                                    <th style={{ padding: "12px 16px" }}>Quantity</th>
-                                    <th style={{ padding: "12px 16px" }}>Status</th>
-                                    {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Actions</th>}
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <>
+                            {/* Desktop Table View */}
+                            <div className="desktop-table-view">
+                                <div className="table-container">
+                                    <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
+                                        <thead>
+                                            <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                                <th style={{ padding: "12px 16px" }}>Make</th>
+                                                <th style={{ padding: "12px 16px" }}>Model</th>
+                                                <th style={{ padding: "12px 16px" }}>Year</th>
+                                                <th style={{ padding: "12px 16px" }}>Price</th>
+                                                <th style={{ padding: "12px 16px" }}>Category</th>
+                                                <th style={{ padding: "12px 16px" }}>Quantity</th>
+                                                <th style={{ padding: "12px 16px" }}>Status</th>
+                                                {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Actions</th>}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {vehicles.map((v) => (
+                                                <tr key={v.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                                    <td style={{ padding: "12px 16px" }}>{v.make}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{v.model}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{v.year}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{v.price}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{v.category}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{v.quantity}</td>
+                                                    <td style={{ padding: "12px 16px" }}>
+                                                        <span style={{
+                                                            padding: "3px 10px",
+                                                            borderRadius: "12px",
+                                                            fontSize: "12px",
+                                                            fontWeight: 600,
+                                                            background: v.status === "AVAILABLE" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
+                                                            color: v.status === "AVAILABLE" ? "#22c55e" : "#ef4444"
+                                                        }}>{v.status}</span>
+                                                    </td>
+                                                    <td style={{ padding: "12px 16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                                        {userRole === "ADMIN" && (
+                                                            <>
+                                                                <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
+                                                                <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
+                                                                <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
+                                                            </>
+                                                        )}
+                                                        {userRole === "USER" && v.status === "AVAILABLE" && (
+                                                            <button className="auth-button" style={{ width: "auto", padding: "6px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
+                                                        )}
+                                                        {userRole === "USER" && v.status === "SOLD" && (
+                                                            <span style={{ color: "var(--text)", fontSize: "13px", padding: "6px 0" }}>Out of Stock</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Mobile Cards View */}
+                            <div className="mobile-cards-view">
                                 {vehicles.map((v) => (
-                                    <tr key={v.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                        <td style={{ padding: "12px 16px" }}>{v.make}</td>
-                                        <td style={{ padding: "12px 16px" }}>{v.model}</td>
-                                        <td style={{ padding: "12px 16px" }}>{v.year}</td>
-                                        <td style={{ padding: "12px 16px" }}>{v.price}</td>
-                                        <td style={{ padding: "12px 16px" }}>{v.category}</td>
-                                        <td style={{ padding: "12px 16px" }}>{v.quantity}</td>
-                                        <td style={{ padding: "12px 16px" }}>
+                                    <div key={v.id} className="vehicle-card">
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                                            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "var(--text-h)" }}>{v.make} {v.model} ({v.year})</h3>
                                             <span style={{
                                                 padding: "3px 10px",
                                                 borderRadius: "12px",
-                                                fontSize: "12px",
+                                                fontSize: "11px",
                                                 fontWeight: 600,
                                                 background: v.status === "AVAILABLE" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
                                                 color: v.status === "AVAILABLE" ? "#22c55e" : "#ef4444"
                                             }}>{v.status}</span>
-                                        </td>
-                                        <td style={{ padding: "12px 16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                        </div>
+                                        <div style={{ fontSize: "13px", color: "var(--text)", marginBottom: "14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                                            <div><strong>Price:</strong> ${v.price}</div>
+                                            <div><strong>Stock:</strong> {v.quantity} units</div>
+                                            <div><strong>Category:</strong> {v.category || "N/A"}</div>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", borderTop: "1px solid var(--border)", paddingTop: "12px" }}>
                                             {userRole === "ADMIN" && (
                                                 <>
-                                                    <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
-                                                    <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
-                                                    <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
+                                                    <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
+                                                    <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
+                                                    <button className="auth-button btn-danger" style={{ flex: 1, padding: "8px 10px", fontSize: "13px" }} onClick={() => handleDelete(v.id)}>Delete</button>
                                                 </>
                                             )}
                                             {userRole === "USER" && v.status === "AVAILABLE" && (
-                                                <button className="auth-button" style={{ width: "auto", padding: "6px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
+                                                <button className="auth-button" style={{ width: "100%", padding: "8px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
                                             )}
                                             {userRole === "USER" && v.status === "SOLD" && (
                                                 <span style={{ color: "var(--text)", fontSize: "13px", padding: "6px 0" }}>Out of Stock</span>
                                             )}
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
-                        </div>
+                            </div>
+                        </>
                     )}
                 </>
             ) : (
@@ -387,32 +475,53 @@ export default function Dashboard() {
                     ) : sales.length === 0 ? (
                         <p>{userRole === "ADMIN" ? "No sales records found." : "You have not purchased any vehicles yet."}</p>
                     ) : (
-                        <div className="table-container">
-                            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
-                                <thead>
-                                    <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                        {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Buyer</th>}
-                                        <th style={{ padding: "12px 16px" }}>Make</th>
-                                        <th style={{ padding: "12px 16px" }}>Model</th>
-                                        <th style={{ padding: "12px 16px" }}>Year</th>
-                                        <th style={{ padding: "12px 16px" }}>Price Paid</th>
-                                        <th style={{ padding: "12px 16px" }}>Purchase Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {sales.map((sale) => (
-                                        <tr key={sale.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                            {userRole === "ADMIN" && <td style={{ padding: "12px 16px" }}>{sale.buyerEmail}</td>}
-                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleMake}</td>
-                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleModel}</td>
-                                            <td style={{ padding: "12px 16px" }}>{sale.vehicleYear}</td>
-                                            <td style={{ padding: "12px 16px" }}>{sale.purchasePrice}</td>
-                                            <td style={{ padding: "12px 16px" }}>{new Date(sale.purchasedAt).toLocaleString()}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <>
+                            {/* Desktop Table View */}
+                            <div className="desktop-table-view">
+                                <div className="table-container">
+                                    <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
+                                        <thead>
+                                            <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                                {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Buyer</th>}
+                                                <th style={{ padding: "12px 16px" }}>Make</th>
+                                                <th style={{ padding: "12px 16px" }}>Model</th>
+                                                <th style={{ padding: "12px 16px" }}>Year</th>
+                                                <th style={{ padding: "12px 16px" }}>Price Paid</th>
+                                                <th style={{ padding: "12px 16px" }}>Purchase Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {sales.map((sale) => (
+                                                <tr key={sale.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
+                                                    {userRole === "ADMIN" && <td style={{ padding: "12px 16px" }}>{sale.buyerEmail}</td>}
+                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleMake}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleModel}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleYear}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{sale.purchasePrice}</td>
+                                                    <td style={{ padding: "12px 16px" }}>{new Date(sale.purchasedAt).toLocaleString()}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Mobile Cards View */}
+                            <div className="mobile-cards-view">
+                                {sales.map((sale) => (
+                                    <div key={sale.id} className="vehicle-card">
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                                            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "var(--text-h)" }}>{sale.vehicleMake} {sale.vehicleModel} ({sale.vehicleYear})</h3>
+                                            <span style={{ fontSize: "12px", color: "var(--accent)", fontWeight: 600 }}>${sale.purchasePrice}</span>
+                                        </div>
+                                        <div style={{ fontSize: "13px", color: "var(--text)", display: "flex", flexDirection: "column", gap: "4px" }}>
+                                            {userRole === "ADMIN" && <div><strong>Buyer:</strong> {sale.buyerEmail}</div>}
+                                            <div><strong>Date:</strong> {new Date(sale.purchasedAt).toLocaleString()}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </>
             )}

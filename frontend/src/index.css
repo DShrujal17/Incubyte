@@ -422,4 +422,73 @@ code {
   }
 }
 
+/* Filter-Wise Search Bar */
+.filter-bar-container {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.filter-inputs-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Desktop vs Mobile Switcher */
+.desktop-table-view {
+  display: block;
+}
+
+.mobile-cards-view {
+  display: none;
+}
+
+.vehicle-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+  .desktop-table-view {
+    display: none;
+  }
+
+  .mobile-cards-view {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .filter-inputs-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-inputs-row > div {
+    width: 100%;
+  }
+
+  .filter-actions-mobile {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .filter-actions-mobile button {
+    flex: 1;
+  }
+}
+
+
 
