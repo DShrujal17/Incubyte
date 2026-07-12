@@ -11,10 +11,14 @@ Developed feature-by-feature using the **Red → Green → Refactor** TDD workfl
 - **Live Web Application (Frontend)**: [https://car-dealership-frontend-iid2.onrender.com](https://car-dealership-frontend-iid2.onrender.com)
 - **Backend API**: [https://car-dealership-backend-c7tn.onrender.com](https://car-dealership-backend-c7tn.onrender.com)
 
+> [!IMPORTANT]
+> Since the application is hosted on Render's free tier, the backend services spin down after periods of inactivity. As a result, the **first request may take some time** (typically 1-2 minutes) to spin up and respond.
+
 > [!NOTE]
 > **Default Admin Account** (pre-seeded):
 > - **Email**: `admin@gmail.com`
 > - **Password**: `admin123`
+
 
 ---
 
