@@ -369,103 +369,48 @@ export default function Dashboard() {
                     ) : vehicles.length === 0 ? (
                         <p>No vehicles in inventory.</p>
                     ) : (
-                        <>
-                            {/* Desktop Table View */}
-                            <div className="desktop-table-view">
-                                <div className="table-container">
-                                    <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
-                                        <thead>
-                                            <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                                <th style={{ padding: "12px 16px" }}>Make</th>
-                                                <th style={{ padding: "12px 16px" }}>Model</th>
-                                                <th style={{ padding: "12px 16px" }}>Year</th>
-                                                <th style={{ padding: "12px 16px" }}>Price</th>
-                                                <th style={{ padding: "12px 16px" }}>Category</th>
-                                                <th style={{ padding: "12px 16px" }}>Quantity</th>
-                                                <th style={{ padding: "12px 16px" }}>Status</th>
-                                                {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Actions</th>}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {vehicles.map((v) => (
-                                                <tr key={v.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                                    <td style={{ padding: "12px 16px" }}>{v.make}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{v.model}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{v.year}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{v.price}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{v.category}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{v.quantity}</td>
-                                                    <td style={{ padding: "12px 16px" }}>
-                                                        <span style={{
-                                                            padding: "3px 10px",
-                                                            borderRadius: "12px",
-                                                            fontSize: "12px",
-                                                            fontWeight: 600,
-                                                            background: v.status === "AVAILABLE" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
-                                                            color: v.status === "AVAILABLE" ? "#22c55e" : "#ef4444"
-                                                        }}>{v.status}</span>
-                                                    </td>
-                                                    <td style={{ padding: "12px 16px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                                                        {userRole === "ADMIN" && (
-                                                            <>
-                                                                <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
-                                                                <button className="auth-button" style={{ width: "auto", padding: "6px 12px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
-                                                                <button className="auth-button btn-danger" style={{ width: "auto", padding: "6px 12px" }} onClick={() => handleDelete(v.id)}>Delete</button>
-                                                            </>
-                                                        )}
-                                                        {userRole === "USER" && v.status === "AVAILABLE" && (
-                                                            <button className="auth-button" style={{ width: "auto", padding: "6px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
-                                                        )}
-                                                        {userRole === "USER" && v.status === "SOLD" && (
-                                                            <span style={{ color: "var(--text)", fontSize: "13px", padding: "6px 0" }}>Out of Stock</span>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* Mobile Cards View */}
-                            <div className="mobile-cards-view">
-                                {vehicles.map((v) => (
-                                    <div key={v.id} className="vehicle-card">
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "var(--text-h)" }}>{v.make} {v.model} ({v.year})</h3>
+                        <div className="bw-cards-grid">
+                            {vehicles.map((v) => (
+                                <div key={v.id} className="bw-card">
+                                    <div>
+                                        <div className="bw-card-header">
+                                            <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: "#6b7280" }}>
+                                                {v.category || "VEHICLE"}
+                                            </span>
                                             <span style={{
-                                                padding: "3px 10px",
+                                                padding: "4px 10px",
                                                 borderRadius: "12px",
                                                 fontSize: "11px",
-                                                fontWeight: 600,
-                                                background: v.status === "AVAILABLE" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
-                                                color: v.status === "AVAILABLE" ? "#22c55e" : "#ef4444"
+                                                fontWeight: 700,
+                                                background: v.status === "AVAILABLE" ? "#111827" : "#ef4444",
+                                                color: "#ffffff"
                                             }}>{v.status}</span>
                                         </div>
-                                        <div style={{ fontSize: "13px", color: "var(--text)", marginBottom: "14px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                                            <div><strong>Price:</strong> ${v.price}</div>
+                                        <div className="bw-card-title">{v.make} {v.model}</div>
+                                        <div className="bw-card-price">${Number(v.price).toLocaleString()}</div>
+                                        <div className="bw-card-specs">
+                                            <div><strong>Year:</strong> {v.year}</div>
                                             <div><strong>Stock:</strong> {v.quantity} units</div>
-                                            <div><strong>Category:</strong> {v.category || "N/A"}</div>
-                                        </div>
-                                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", borderTop: "1px solid var(--border)", paddingTop: "12px" }}>
-                                            {userRole === "ADMIN" && (
-                                                <>
-                                                    <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "var(--accent)" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
-                                                    <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "#7c3aed" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
-                                                    <button className="auth-button btn-danger" style={{ flex: 1, padding: "8px 10px", fontSize: "13px" }} onClick={() => handleDelete(v.id)}>Delete</button>
-                                                </>
-                                            )}
-                                            {userRole === "USER" && v.status === "AVAILABLE" && (
-                                                <button className="auth-button" style={{ width: "100%", padding: "8px 14px", background: "#059669" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
-                                            )}
-                                            {userRole === "USER" && v.status === "SOLD" && (
-                                                <span style={{ color: "var(--text)", fontSize: "13px", padding: "6px 0" }}>Out of Stock</span>
-                                            )}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </>
+                                    <div className="bw-card-actions">
+                                        {userRole === "ADMIN" && (
+                                            <>
+                                                <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "#000000" }} onClick={() => handleOpenEditModal(v)}>Edit</button>
+                                                <button className="auth-button" style={{ flex: 1, padding: "8px 10px", fontSize: "13px", background: "#374151" }} onClick={() => handleOpenRestockModal(v.id)}>Restock</button>
+                                                <button className="auth-button btn-danger" style={{ flex: 1, padding: "8px 10px", fontSize: "13px" }} onClick={() => handleDelete(v.id)}>Delete</button>
+                                            </>
+                                        )}
+                                        {userRole === "USER" && v.status === "AVAILABLE" && (
+                                            <button className="auth-button" style={{ width: "100%", padding: "10px 14px", background: "#000000" }} onClick={() => handlePurchase(v.id)}>Buy Now</button>
+                                        )}
+                                        {userRole === "USER" && v.status === "SOLD" && (
+                                            <span style={{ color: "#6b7280", fontSize: "13px", padding: "6px 0", width: "100%", textAlign: "center" }}>Out of Stock</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </>
             ) : (
@@ -475,53 +420,24 @@ export default function Dashboard() {
                     ) : sales.length === 0 ? (
                         <p>{userRole === "ADMIN" ? "No sales records found." : "You have not purchased any vehicles yet."}</p>
                     ) : (
-                        <>
-                            {/* Desktop Table View */}
-                            <div className="desktop-table-view">
-                                <div className="table-container">
-                                    <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--bg)" }}>
-                                        <thead>
-                                            <tr style={{ background: "var(--code-bg)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                                {userRole === "ADMIN" && <th style={{ padding: "12px 16px" }}>Buyer</th>}
-                                                <th style={{ padding: "12px 16px" }}>Make</th>
-                                                <th style={{ padding: "12px 16px" }}>Model</th>
-                                                <th style={{ padding: "12px 16px" }}>Year</th>
-                                                <th style={{ padding: "12px 16px" }}>Price Paid</th>
-                                                <th style={{ padding: "12px 16px" }}>Purchase Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {sales.map((sale) => (
-                                                <tr key={sale.id} style={{ borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-                                                    {userRole === "ADMIN" && <td style={{ padding: "12px 16px" }}>{sale.buyerEmail}</td>}
-                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleMake}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleModel}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{sale.vehicleYear}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{sale.purchasePrice}</td>
-                                                    <td style={{ padding: "12px 16px" }}>{new Date(sale.purchasedAt).toLocaleString()}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* Mobile Cards View */}
-                            <div className="mobile-cards-view">
-                                {sales.map((sale) => (
-                                    <div key={sale.id} className="vehicle-card">
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "var(--text-h)" }}>{sale.vehicleMake} {sale.vehicleModel} ({sale.vehicleYear})</h3>
-                                            <span style={{ fontSize: "12px", color: "var(--accent)", fontWeight: 600 }}>${sale.purchasePrice}</span>
+                        <div className="bw-cards-grid">
+                            {sales.map((sale) => (
+                                <div key={sale.id} className="bw-card">
+                                    <div>
+                                        <div className="bw-card-header">
+                                            <span style={{ fontSize: "12px", fontWeight: 700, color: "#6b7280" }}>PURCHASE RECORD</span>
+                                            <span style={{ fontSize: "14px", fontWeight: 800, color: "#000000" }}>${Number(sale.purchasePrice).toLocaleString()}</span>
                                         </div>
-                                        <div style={{ fontSize: "13px", color: "var(--text)", display: "flex", flexDirection: "column", gap: "4px" }}>
-                                            {userRole === "ADMIN" && <div><strong>Buyer:</strong> {sale.buyerEmail}</div>}
-                                            <div><strong>Date:</strong> {new Date(sale.purchasedAt).toLocaleString()}</div>
+                                        <div className="bw-card-title">{sale.vehicleMake} {sale.vehicleModel}</div>
+                                        <div className="bw-card-specs">
+                                            <div><strong>Year:</strong> {sale.vehicleYear}</div>
+                                            <div><strong>Date:</strong> {new Date(sale.purchasedAt).toLocaleDateString()}</div>
+                                            {userRole === "ADMIN" && <div style={{ gridColumn: "1 / -1" }}><strong>Buyer:</strong> {sale.buyerEmail}</div>}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </>
             )}
