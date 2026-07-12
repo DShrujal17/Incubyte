@@ -274,6 +274,32 @@ code {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.modal-actions button {
+  width: auto;
+  padding: 10px 20px;
+}
+
+.modal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 576px) {
+  .modal-form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .modal-actions button {
+    width: 100% !important;
+  }
 }
 
 .btn-secondary {

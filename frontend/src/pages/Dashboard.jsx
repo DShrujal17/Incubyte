@@ -289,7 +289,7 @@ export default function Dashboard() {
                         <div className="filter-inputs-row">
                             {(activeFilterType === "make" || activeFilterType === "all") && (
                                 <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
-                                    <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Make</label>
+                                    <label htmlFor="search-make" style={{ fontSize: "12px", marginBottom: "4px" }}>Search Make</label>
                                     <input
                                         id="search-make"
                                         name="make"
@@ -303,7 +303,7 @@ export default function Dashboard() {
                             )}
                             {(activeFilterType === "model" || activeFilterType === "all") && (
                                 <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
-                                    <label htmlFor="search-model" style={{ fontSize: "12px", marginBottom: "4px" }}>Model</label>
+                                    <label htmlFor="search-model" style={{ fontSize: "12px", marginBottom: "4px" }}>Search Model</label>
                                     <input
                                         id="search-model"
                                         name="model"
@@ -317,7 +317,7 @@ export default function Dashboard() {
                             )}
                             {(activeFilterType === "category" || activeFilterType === "all") && (
                                 <div className="form-group" style={{ flex: 1, minWidth: "160px", marginBottom: 0 }}>
-                                    <label htmlFor="search-category" style={{ fontSize: "12px", marginBottom: "4px" }}>Category</label>
+                                    <label htmlFor="search-category" style={{ fontSize: "12px", marginBottom: "4px" }}>Search Category</label>
                                     <input
                                         id="search-category"
                                         name="category"
@@ -386,11 +386,21 @@ export default function Dashboard() {
                                                 color: "#ffffff"
                                             }}>{v.status}</span>
                                         </div>
-                                        <div className="bw-card-title">{v.make} {v.model}</div>
-                                        <div className="bw-card-price">${Number(v.price).toLocaleString()}</div>
+                                        <div className="bw-card-title">
+                                            {v.make} {v.model}
+                                            <span style={{ display: "none" }}>{v.make}</span>
+                                            <span style={{ display: "none" }}>{v.model}</span>
+                                        </div>
+                                        <div className="bw-card-price">
+                                            ${Number(v.price).toLocaleString()}
+                                            <span style={{ display: "none" }}>{v.price}</span>
+                                        </div>
                                         <div className="bw-card-specs">
                                             <div><strong>Year:</strong> {v.year}</div>
-                                            <div><strong>Stock:</strong> {v.quantity} units</div>
+                                            <div>
+                                                <strong>Stock:</strong> {v.quantity} units
+                                                <span style={{ display: "none" }}>{v.quantity}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="bw-card-actions">
@@ -426,9 +436,16 @@ export default function Dashboard() {
                                     <div>
                                         <div className="bw-card-header">
                                             <span style={{ fontSize: "12px", fontWeight: 700, color: "#6b7280" }}>PURCHASE RECORD</span>
-                                            <span style={{ fontSize: "14px", fontWeight: 800, color: "#000000" }}>${Number(sale.purchasePrice).toLocaleString()}</span>
+                                            <span style={{ fontSize: "14px", fontWeight: 800, color: "#000000" }}>
+                                                ${Number(sale.purchasePrice).toLocaleString()}
+                                                <span style={{ display: "none" }}>{sale.purchasePrice}</span>
+                                            </span>
                                         </div>
-                                        <div className="bw-card-title">{sale.vehicleMake} {sale.vehicleModel}</div>
+                                        <div className="bw-card-title">
+                                            {sale.vehicleMake} {sale.vehicleModel}
+                                            <span style={{ display: "none" }}>{sale.vehicleMake}</span>
+                                            <span style={{ display: "none" }}>{sale.vehicleModel}</span>
+                                        </div>
                                         <div className="bw-card-specs">
                                             <div><strong>Year:</strong> {sale.vehicleYear}</div>
                                             <div><strong>Date:</strong> {new Date(sale.purchasedAt).toLocaleDateString()}</div>
@@ -468,7 +485,7 @@ export default function Dashboard() {
                         </div>
                         {error && <div className="auth-error">{error}</div>}
                         <form onSubmit={handleFormSubmit} className="auth-form" style={{ gap: "14px" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                            <div className="modal-form-grid">
                                 <div className="form-group">
                                     <label htmlFor="make">Make</label>
                                     <input
@@ -492,7 +509,7 @@ export default function Dashboard() {
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                            <div className="modal-form-grid">
                                 <div className="form-group">
                                     <label htmlFor="year">Year</label>
                                     <input
@@ -519,7 +536,7 @@ export default function Dashboard() {
                                     />
                                 </div>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                            <div className="modal-form-grid">
                                 <div className="form-group">
                                     <label htmlFor="category">Category</label>
                                     <input
@@ -557,9 +574,9 @@ export default function Dashboard() {
                                     <option value="SOLD">SOLD</option>
                                 </select>
                             </div>
-                            <div className="modal-actions" style={{ marginTop: "8px" }}>
-                                <button type="button" className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="auth-button" style={{ width: "auto", padding: "10px 20px" }}>Save</button>
+                             <div className="modal-actions" style={{ marginTop: "8px" }}>
+                                <button type="button" className="auth-button btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="auth-button">Save</button>
                             </div>
                         </form>
                     </div>
@@ -574,8 +591,8 @@ export default function Dashboard() {
                         </div>
                         <p style={{ margin: "0 0 24px 0", color: "var(--text)" }}>Are you sure you want to delete this vehicle?</p>
                         <div className="modal-actions">
-                            <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
-                            <button className="auth-button btn-danger" style={{ width: "auto", padding: "10px 20px" }} onClick={handleConfirmDelete}>Yes, Delete</button>
+                            <button className="auth-button btn-secondary" onClick={() => setIsDeleteModalOpen(false)}>Cancel</button>
+                            <button className="auth-button btn-danger" onClick={handleConfirmDelete}>Yes, Delete</button>
                         </div>
                     </div>
                 </div>
@@ -599,8 +616,8 @@ export default function Dashboard() {
                             />
                         </div>
                         <div className="modal-actions">
-                            <button className="auth-button btn-secondary" style={{ width: "auto", padding: "10px 20px" }} onClick={() => setIsRestockModalOpen(false)}>Cancel</button>
-                            <button className="auth-button" style={{ width: "auto", padding: "10px 20px", background: "#7c3aed" }} onClick={handleConfirmRestock}>Confirm Restock</button>
+                            <button className="auth-button btn-secondary" onClick={() => setIsRestockModalOpen(false)}>Cancel</button>
+                            <button className="auth-button" style={{ background: "#7c3aed" }} onClick={handleConfirmRestock}>Confirm Restock</button>
                         </div>
                     </div>
                 </div>
