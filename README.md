@@ -1,8 +1,20 @@
 # 🚗 Car Dealership Inventory System
 
-A full-stack Car Dealership Inventory System built using **Spring Boot**, **React**, and **PostgreSQL** following **Test-Driven Development (TDD)** principles.
+A full-stack, mobile-responsive Car Dealership Inventory System built using **Spring Boot**, **React**, and **PostgreSQL** following **Test-Driven Development (TDD)** principles.
 
 Developed feature-by-feature using the **Red → Green → Refactor** TDD workflow with frequent, descriptive Git commits.
+
+---
+
+## 🌐 Live Demo (Deployed on Render)
+
+- **Live Web Application (Frontend)**: [https://car-dealership-frontend-iid2.onrender.com](https://car-dealership-frontend-iid2.onrender.com)
+- **Backend API**: [https://car-dealership-backend-c7tn.onrender.com](https://car-dealership-backend-c7tn.onrender.com)
+
+> [!NOTE]
+> **Default Admin Account** (pre-seeded):
+> - **Email**: `admin@gmail.com`
+> - **Password**: `admin123`
 
 ---
 
@@ -91,12 +103,20 @@ car-dealership-inventory/
 
 ---
 
-## 🔍 Vehicle Search & Filtering
+## 🔍 Filter-Wise Vehicle Search & Filtering
 
-- **Dynamic Search Bar** on the Dashboard with filters for Make, Model, Category, Min Price, and Max Price
-- Backend uses **JPA Specifications** for case-insensitive, partial-match queries
-- Filters can be combined or used individually
-- **Search** and **Reset** buttons for full control
+- **Sleek Filter-Wise Search Bar**: Features interactive filter pills (`Make`, `Model`, `Category`, `Price Range`, `Advanced`) so users can search filter-by-filter without visual clutter on mobile or desktop.
+- Backend uses **JPA Specifications** for case-insensitive, partial-match queries.
+- Filters can be combined or used individually via advanced mode.
+- **Search** and **Reset** buttons for full control.
+
+---
+
+## 📱 True Responsive Mobile UI & Phone Experience
+
+- **Responsive Card Layout (`≤ 768px`)**: On mobile devices and phones, inventory items and sales records automatically transform into clean, touch-friendly **Vehicle Cards** showing status badges, price, quantity, and full-width action buttons.
+- **Desktop Table View (`> 768px`)**: Automatically renders the clean multi-column data table on larger screens.
+- **Responsive Navigation & Modals**: All modals, forms, and headers adapt smoothly across mobile, tablet, and desktop viewports.
 
 ---
 
@@ -401,7 +421,8 @@ POST /api/vehicles/{id}/restock
 - [x] Vehicle Table (Make, Model, Year, Price, Category, Quantity, Status)
 - [x] Interactive Add / Edit Form Modals
 - [x] Custom Delete Confirmation Modal
-- [x] Search & Filter Bar (Make, Model, Category, Min/Max Price)
+- [x] Sleek Filter-Wise Search Bar with Interactive Filter Pills
+- [x] True Responsive Mobile Card Layout (`≤ 768px`) & Desktop Table View (`> 768px`)
 - [x] Role-based UI (Buy Now for USER, Edit/Restock/Delete for ADMIN)
 - [x] Restock Quantity Modal
 - [x] Color-coded status badges (green = AVAILABLE, red = SOLD)
