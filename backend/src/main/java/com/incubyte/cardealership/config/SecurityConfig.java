@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,9 +38,9 @@ public class SecurityConfig {
                         ))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/vehicles/*/purchase").authenticated()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/vehicles", "/api/vehicles/**").authenticated()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/sales/my").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/vehicles/*/purchase").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/vehicles", "/api/vehicles/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/sales/my").authenticated()
                         .requestMatchers("/api/sales").hasRole("ADMIN")
                         .requestMatchers("/api/vehicles", "/api/vehicles/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
@@ -54,7 +55,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:1308")
+                List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:1308",
+                        "https://car-dealership-frontend-iid2.onrender.com")
         );
 
         configuration.setAllowedMethods(
