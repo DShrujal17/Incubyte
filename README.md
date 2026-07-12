@@ -428,6 +428,20 @@ POST /api/vehicles/{id}/restock
 - [x] Color-coded status badges (green = AVAILABLE, red = SOLD)
 - [x] Toast-style action notifications for Purchase & Restock
 
+# 🤖 AI Usage & Assistance
+
+In alignment with modern software development workflows, AI assistance (such as **ChatGPT**) was utilized as a pair programming assistant for developer productivity across specific areas of this project:
+
+| Area | Purpose & Usage Details |
+|---|---|
+| **Architectural & Requirement Analysis** | Brainstorming feature design, clarifying requirement details, and analyzing edge cases. |
+| **Boilerplate Code Generation** | Accelerating initial setup of standard templates and configuration structures. |
+| **Syntax & Minor Code Snippets** | Verifying specific syntax patterns and suggesting minor helper code snippets. |
+| **Documentation & README Formatting** | Structuring, summarizing, and formatting comprehensive project documentation (`README.md`). |
+
+> [!NOTE]
+> All core business logic, Test-Driven Development (TDD) implementations, full-stack integration, and deployment verification were thoroughly reviewed, tested, and validated by the developer.
+
 ---
 
 # 👨‍💻 Author
